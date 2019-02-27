@@ -5,8 +5,8 @@
 - authentication via [JWT](https://jwt.io/)
 - routes mapping via [express-routes-mapper](https://github.com/aichbauer/express-routes-mapper)
 - environments for `development`, `testing`, and `production`
-- built with [npm sripts](#npm-scripts)
-- example for User model and User controller, with jwt authentication, simply type `npm i` and `npm start`
+- built with [npm scripts](#npm-scripts)
+- check the example for User model and User controller, with jwt authentication - [installation instructions](#install-and-use).
 
 ## Table of Contents
 
@@ -23,7 +23,7 @@
   - [Connection and Database](#connection-and-database)
 - [Routes](#routes)
   - [Create Routes](#create-routes)
-- [npm Scripts](#npm-scripts)
+- [npm scripts](#npm-scripts)
 
 ## Install and Use
 
@@ -43,7 +43,7 @@ $ npm install
 $ cp .env.example .env
 # fill .env file
 # ...
-# to use postgresql
+# if you want to use postgresql (optional)
 $ npm install -S pg pg-hstore
 # start the application
 $ npm start
@@ -370,22 +370,9 @@ Holds all the server configurations.
 
 ## Connection and Database
 
-> Note: if you use msql make sure mysql server is running on the machine
-
-> Note: if you use postgres make sure postgres server is running on the machine
-
-This two files are the way to establish a connaction to a database.
-
-You only need to touch connection.js, default for `development` is MySQL, but it is easy as typing `postgres` to switch to another db.
-
-> Note: to run a postgres db run these package with: `npm i -S pg pg-hstore` or `yarn add pg pg-hstore`
-
-Now simply configure the keys with your credentials in `.env` file.
+Configure the keys with your credentials in `.env` file.
 
 ```
-  NODE_ENV=development
-  PORT=3001
-
   DB_DIALECT=mysql
   DB_HOST=localhost
   DB_NAME=name
@@ -394,6 +381,12 @@ Now simply configure the keys with your credentials in `.env` file.
   DB_PORT=3609
   DB_SHOULD_MIGRATE=false
 ```
+
+Default dialect for the application is MySQL. To switch for PostgreSQL, type `DB_DIALECT=postgres` in `.env` file.
+
+> Note: if you use `msql` make sure MySQL server is running on the machine
+
+> Note: to use a postgres run : `npm i -S pg pg-hstore` or `yarn add pg pg-hstore`
 
 ## npm scripts
 
@@ -428,7 +421,7 @@ Before running on production you have to set the **environment vaiables**:
 - DB_SHOULD_MIGRATE - Make sure to set `false` in production
 - JWT_SECERT - Secret for JSON web token (Make sure it is different from your local environment)
 
-### other commands
+### Other commands
 
 - `npm run dev` - simply start the server without a watcher
 - `npm run nodemon` - same as `npm start`
