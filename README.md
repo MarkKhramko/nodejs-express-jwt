@@ -1,6 +1,6 @@
 # nodejs-express-jwt
 
-> Express REST API with JWT Authentication and support for mysql, and postgresql
+> Express REST API with JWT Authentication and support for MySQL and PostgreSQL
 
 - authentication via [JWT](https://jwt.io/)
 - routes mapping via [express-routes-mapper](https://github.com/aichbauer/express-routes-mapper)
@@ -47,16 +47,22 @@ $ cp .env.example .env
 $ npm install -S pg pg-hstore
 # start the application
 $ npm start
+#
+# OR
+#
+# start development with nodemon
+$ npm run dev
 ```
 
 MySQL is supported out of the box as it is the default.
 
 ## Folder Structure
 
-This boilerplate has 2 main directories:
+This boilerplate has 3 main directories:
 
 - app - for controllers, models, services, etc.
 - config - for routes, database, etc.
+- public - for css, js, favicon files, etc.
 
 ## Controllers
 
