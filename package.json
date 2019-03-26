@@ -12,9 +12,8 @@
     "url": "https://github.com/MarkKhramko/nodejs-express-jwt/issues"
   },
   "scripts": {
-    "start": "npm run nodemon",
-    "dev": "cross-env NODE_ENV=development node ./app/app.js",
-    "nodemon": "nodemon --exec npm run dev",
+    "start": "node ./app/app.js",
+    "dev": "cross-env NODE_ENV=development nodemon ./app/app.js",
     "production": "cross-env NODE_ENV=production node ./app/app.js"
   },
   "jest": {
