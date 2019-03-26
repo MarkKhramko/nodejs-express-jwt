@@ -15,6 +15,6 @@ module.exports = {
   web:{
   	publicRoutes:publicWebRoutes
   },
-  port: process.env.APP_PORT || '2018',
+  port: process.env.APP_PORT || process.env.PORT || '2018',
   dbShouldMigrate: dbShouldMigrate,
 };
