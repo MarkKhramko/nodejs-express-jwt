@@ -11,48 +11,58 @@ const processError = (err, req, res) => {
 };
 
 const UserController = () => {
-	const register = (req, res) => {
-		const { body } = req;
-
-		return User
-			.create({
+	const register = async (req, res) => {
+		try{
+			const { body } = req;
+			const data = {
 				email: body.email,
 				password: body.password,
-			})
-			.then((user) => {
-				const token = authService.issue({ id: user.id });
-				return res.status(200).json({ token, user });
-			})
-			.catch((err) => processError(err, req, res));
+			};
+			const user = await User.create(data);
+			const token = authService.issue({ id: user.id });
+			return res.status(200).json({
+				token,
+				user
+			});
+		}
+		catch(error){
+			console.error("UserController.register error: ", { error });
+			return processError(error, req, res);
+		}
 	};
 
-	const login = (req, res) => {
-		const { email, password } = req.body;
+	const login = async (req, res) => {
+		try{
+			const { email, password } = req.body;
+			if (!email || email === undefined || !password || password === undefined) {
+				const error = new Error("Invalid email OR password input");
+				throw error;
+			}
 
-		if (email && password) {
-			User
-				.findOne({
-					where: {
-						email,
-					},
-				})
-				.then((user) => {
-					if (!user) {
-						return res.status(400).json({ msg: 'Bad Request: User not found' });
-					}
+			const query = {
+				where: {
+					email
+				}
+			};
+			const user = await User.findOne(query);
+			if (!user){
+				return res.status(400).json({ msg: 'Bad Request: User not found' });
+			}
 
-					if (bcryptService.comparePassword(password, user.password)) {
-						const token = authService.issue({ id: user.id });
+			if (bcryptService.comparePassword(password, user.password)) {
+				const token = authService.issue({ id: user.id });
 
-						return res.status(200).json({ token, user });
-					}
-
-					return res.status(401).json({ msg: 'Unauthorized' });
-				})
-				.catch((err) => {
-					console.log(err);
-					return res.status(500).json({ msg: 'Internal server error' });
+				return res.status(200).json({
+					token,
+					user
 				});
+			}
+
+			return res.status(401).json({ msg: 'Unauthorized' });
+		}
+		catch(error){
+			console.error("UserController.login error: ", { error });
+			return processError(error, req, res);
 		}
 	};
 
@@ -68,14 +78,15 @@ const UserController = () => {
 			});
 	};
 
-	const getAll = (req, res) => {
-		User
-			.findAll()
-			.then((users) => res.status(200).json({ users }))
-			.catch((err) => {
-				console.log(err);
-				return res.status(500).json({ msg: 'Internal server error' });
-			});
+	const getAll = async (req, res) => {
+		try{
+			const users = await User.findAll();
+			return res.status(200).json({ users });
+		}
+		catch(error){
+			console.error("UserController.getAll error: ", { error });
+			return processError(error, req, res);
+		}
 	};
 
 
