@@ -1,6 +1,6 @@
 # nodejs-express-jwt
 
-> Express REST API with JWT Authentication and support for MySQL and PostgreSQL
+> Express REST API Boilerplate with JWT Authentication and support for MySQL and PostgreSQL
 
 - authentication via [JWT](https://jwt.io/)
 - routes mapping via [express-routes-mapper](https://github.com/aichbauer/express-routes-mapper)
@@ -58,11 +58,12 @@ MySQL is supported out of the box as it is the default.
 
 ## Folder Structure
 
-This boilerplate has 3 main directories:
+This boilerplate has 4 main directories:
 
 - app - for controllers, models, services, etc.
 - config - for routes, database, etc.
 - public - for css, js, favicon files, etc.
+- migrator - snippet to help migrate required models before application start.
 
 ## Controllers
 
@@ -152,7 +153,7 @@ const ModelController = () => {
     const { value } = req.body;
 
     Model
-      .findById(id)
+      .findByPk(id)
       .then((model) => {
         if(!model) {
           return res.status(400).json({ msg: 'Bad Request: Model not found' });
@@ -178,7 +179,7 @@ const ModelController = () => {
     const { id } = req.params;
 
     Model
-      .findById(id)
+      .findByPk(id)
       .then((model) => {
         if(!model) {
           return res.status(400).json({ msg: 'Bad Request: Model not found' })
@@ -219,14 +220,14 @@ model.exports = ModelController;
 
 ### Create a Model
 
-Controllers in this boilerplate have a naming convention: `Model.js` and uses [Sequelize](http://docs.sequelizejs.com/) to define our Models, if you want further information read the [Docs](http://docs.sequelizejs.com/).
+Controllers in this boilerplate have a naming convention: `Model.js` and uses [Sequelize](http://docs.sequelizejs.com/) to define Models, if you want further information read the [Docs](http://docs.sequelizejs.com/).
 
 Example User Model:
 
 ```js
 const Sequelize = require('sequelize');
 
-// for encrypting our passwords
+// for passwords encryption
 const bcryptSevice = require('../services/bcrypt.service');
 
 // the DB connection
@@ -236,7 +237,7 @@ const sequelize = require('../../config/database');
 const hooks = {
   beforeCreate(user) {
     user.password = bcryptSevice.password(user);
-  },
+  }
 };
 
 // naming the table in DB
@@ -250,13 +251,13 @@ const User = sequelize.define('User', {
   },
   password: {
     type: Sequelize.STRING,
-  },
+  }
 }, { hooks, tableName });
 
-// instead of using instanceMethod
-// in sequelize > 4 we are writing the function
+// Instead of using instanceMethod
+// in Sequelize > 4 we write the function
 // to the prototype object of our model.
-// as we do not want to share sensitive data, the password
+// As we do not want to share sensitive data, the password
 // field gets ommited before sending
 User.prototype.toJSON = function () {
   const values = Object.assign({}, this.get());
@@ -358,14 +359,16 @@ Get comments from another API:
 
 ```js
 module.exports = {
-  getComments: () => (
-    fetch('https://jsonplaceholder.typicode.com/comments', {
-      method: 'get'
-    }).then(function(res) {
+  getComments: async () => (
+    try{
+      const res = await fetch('https://jsonplaceholder.typicode.com/comments', {
+        method: 'get'
+      });
       // do some fancy stuff with the response
-    }).catch(function(err) {
-      // Error :(
-    })
+    }
+    catch(err){
+      // Process error
+    }
   );
 };
 ```
@@ -385,12 +388,11 @@ Configure the keys with your credentials in `.env` file.
   DB_USER=root
   DB_PASSWORD=root
   DB_PORT=3609
-  DB_SHOULD_MIGRATE=false
 ```
 
 Default dialect for the application is MySQL. To switch for PostgreSQL, type `DB_DIALECT=postgres` in `.env` file.
 
-> Note: if you use `msql` make sure MySQL server is running on the machine
+> Note: if you use `mysql` make sure MySQL server is running on the machine
 
 > Note: to use a postgres run : `npm i -S pg pg-hstore` or `yarn add pg pg-hstore`
 
@@ -424,7 +426,6 @@ Before running on production you have to set the **environment vaiables**:
 - DB_USER - Database username for production
 - DB_PASS - Database password for production
 - DB_PORT - Database port for production
-- DB_SHOULD_MIGRATE - Make sure to set `false` in production
 - JWT_SECERT - Secret for JSON web token (Make sure it is different from your local environment)
 
 ### Other commands
