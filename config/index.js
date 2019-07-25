@@ -7,14 +7,14 @@ const dbShouldMigrate = (process.env.DB_SHOULD_MIGRATE === 'true');
 console.warn('DB Should migrate:', dbShouldMigrate);
 
 module.exports = {
-  keep: false,
-  api: {
-  	privateRoutes:privateAPIRoutes,
-  	publicRoutes:publicAPIRoutes
-  },
-  web:{
-  	publicRoutes:publicWebRoutes
-  },
-  port: process.env.APP_PORT || process.env.PORT || '2018',
-  dbShouldMigrate: dbShouldMigrate,
+	keep: false,
+	api: {
+		privateRoutes:privateAPIRoutes,
+		publicRoutes:publicAPIRoutes
+	},
+	web:{
+		publicRoutes:publicWebRoutes
+	},
+	port: process.env.APP_PORT || process.env.PORT || '2018',
+	dbShouldMigrate: dbShouldMigrate,
 };

@@ -1,6 +1,6 @@
 const processError = (err, req, res) => {
-  console.error(err);
-  return res.render('500');
+	console.error(err);
+	return res.render('500');
 };
 
 const HomePageController = () => {

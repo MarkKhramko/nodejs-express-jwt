@@ -1,3 +1,3 @@
 module.exports = {
-  'GET /': 'HomePageController.getHomePage'
+	'GET /': 'HomePageController.getHomePage'
 };

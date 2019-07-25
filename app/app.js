@@ -44,9 +44,9 @@ app.use(express.static('public'));
 
 // secure express app
 app.use(helmet({
-  dnsPrefetchControl: false,
-  frameguard: false,
-  ieNoOpen: false,
+	dnsPrefetchControl: false,
+	frameguard: false,
+	ieNoOpen: false,
 }));
 
 // Parsing the request bodies
@@ -64,15 +64,15 @@ app.use('/api/private', mapRoutes(config.api.privateRoutes, 'app/controllers/api
 app.use('/', mapRoutes(config.web.publicRoutes, 'app/controllers/web/'));
 
 server.listen(config.port, () => {
-  if (environment !== 'production' &&
-    environment !== 'development' &&
-    environment !== 'testing'
-  ) {
-    console.error(`NODE_ENV is set to ${environment}, but only "production", "testing" and "development" are valid.`);
-    process.exit(1);
-  } 
-  else {
-    console.log('\x1b[1m', `server is running on port: ${config.port}`, '\x1b[0m');
-  }
-  return DB;
+	if (environment !== 'production' &&
+		environment !== 'development' &&
+		environment !== 'testing'
+	) {
+		console.error(`NODE_ENV is set to ${environment}, but only "production", "testing" and "development" are valid.`);
+		process.exit(1);
+	} 
+	else {
+		console.log('\x1b[1m', `server is running on port: ${config.port}`, '\x1b[0m');
+	}
+	return DB;
 });
