@@ -28,7 +28,7 @@ const environment = process.env.NODE_ENV;
  */
 const app = express();
 const server = http.Server(app);
-const DB = dbService(environment, config.dbShouldMigrate).start();
+const DB = dbService(environment).start();
 
 // Enable gzip compression
 app.use(compression());

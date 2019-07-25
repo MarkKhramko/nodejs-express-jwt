@@ -1,6 +1,6 @@
 const database = require('../../config/database');
 
-const dbService = (environment, shouldMigrate) => {
+const dbService = (environment) => {
 	const authenticateDB = () => (
 		database.authenticate()
 	);
@@ -14,58 +14,49 @@ const dbService = (environment, shouldMigrate) => {
 	);
 
 	const successfulDBStart = () => (
-		console.info('connection to the database has been established successfully')
+		console.info('\x1b[1m', 'Connection to the database is fully operational', '\x1b[0m')
 	);
 
 	const errorDBStart = (err) => (
-		console.info('unable to connect to the database:', err)
+		console.error('Unable to connect to the database:', err)
 	);
 
 	const wrongEnvironment = () => {
-		console.error(`Only "development", "staging", "test" and "production" are valid NODE_ENV variables but ${environment} is specified`);
+		console.error(`Only development, staging, test and production are valid NODE_ENV variables but ${environment} is specified`);
 		return process.exit(1);
 	};
 
-	const startMigrateFalse = () => {
-		console.info('start database without migration');
-		successfulDBStart();
-	};
-
-	const startMigrateTrue = () => {
-		console.info('should migrate database');
-		dropDB().then(() => (
-			syncDB().then(() => successfulDBStart())
-				.catch((err) => errorDBStart(err))
-		)
-			.catch((err) => errorDBStart(err)));
-	};
-
-	const startDev = () => (
-		authenticateDB().then(() => {
-			if (shouldMigrate) {
-				return startMigrateTrue();
-			}
-
-			return startMigrateFalse();
+	/* Initializers */
+	const startDev = ()=>(
+		authenticateDB()
+		.then(() => {
+			return successfulDBStart();
 		})
+		.catch((err) => errorDBStart(err))
 	);
 
-	const startStage = () => (
-		authenticateDB().then(() => {
-			if (shouldMigrate) {
-				return startMigrateTrue();
-			}
-
-			return startMigrateFalse();
+	const startStage = ()=>(
+		authenticateDB()
+		.then(() => {
+			return successfulDBStart();
 		})
+		.catch((err) => errorDBStart(err))
 	);
 
-	const startTest = () => (
-		authenticateDB().then(() => startMigrateFalse())
+	const startTest = ()=>(
+		authenticateDB()
+		.then(() => {
+			return successfulDBStart();
+		})
+		.catch((err) => errorDBStart(err))
 	);
 
-	const startProd = () => (
-		authenticateDB().then(() => startMigrateFalse())
+	const startProd = ()=>(
+		authenticateDB()
+		.then(() => {
+			return successfulDBStart();
+		})
+		.catch((err) => errorDBStart(err))
 	);
 
 	const start = () => {
@@ -89,3 +80,20 @@ const dbService = (environment, shouldMigrate) => {
 };
 
 module.exports = dbService;
+module.exports.migrate = (force=false)=>{
+
+	if (typeof force !== 'boolean'){
+		console.error("Wrong force parameter; must be boolean");
+		return;
+	}
+
+	return database
+	.authenticate()
+	.then(() => {
+		console.log('Models to sync:', database.models);
+		return database
+		.sync({ force })
+		.then(() => console.log('Successful migration'))
+		.catch((err) => console.error(err));
+	})
+};
