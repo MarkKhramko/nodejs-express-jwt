@@ -10,7 +10,7 @@ const processError = (err, req, res) => {
 	return res.status(500).json({ msg: 'Internal server error' });
 };
 
-const UserController = () => {
+const UsersController = () => {
 	const register = async (req, res) => {
 		try{
 			const { body } = req;
@@ -26,7 +26,7 @@ const UserController = () => {
 			});
 		}
 		catch(error){
-			console.error("UserController.register error: ", { error });
+			console.error("UsersController.register error: ", { error });
 			return processError(error, req, res);
 		}
 	};
@@ -61,7 +61,7 @@ const UserController = () => {
 			return res.status(401).json({ msg: 'Unauthorized' });
 		}
 		catch(error){
-			console.error("UserController.login error: ", { error });
+			console.error("UsersController.login error: ", { error });
 			return processError(error, req, res);
 		}
 	};
@@ -84,7 +84,7 @@ const UserController = () => {
 			return res.status(200).json({ users });
 		}
 		catch(error){
-			console.error("UserController.getAll error: ", { error });
+			console.error("UsersController.getAll error: ", { error });
 			return processError(error, req, res);
 		}
 	};
@@ -98,4 +98,4 @@ const UserController = () => {
 	};
 };
 
-module.exports = UserController;
+module.exports = UsersController;
