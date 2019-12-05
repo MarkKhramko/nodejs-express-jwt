@@ -1,6 +1,6 @@
-const User = require('../../models/User');
-const authService = require('../../services/auth.service');
-const bcryptService = require('../../services/bcrypt.service');
+const User = require('#models/User');
+const authService = require('#services/auth.service');
+const bcryptService = require('#services/bcrypt.service');
 
 const processError = (err, req, res) => {
 	if (err.original.code === 'ER_DUP_ENTRY') {

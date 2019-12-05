@@ -16,9 +16,9 @@ const compression = require('compression');
 /**
  * Server configuration
  */
-const config = require('../config/');
-const dbService = require('./services/db.service');
-const auth = require('./policies/auth.policy');
+const config = require('#config/');
+const dbService = require('#services/db.service');
+const auth = require('#policies/auth.policy');
 
 // Environment: development, staging, testing, production
 const environment = process.env.NODE_ENV;

@@ -1,46 +1,51 @@
 {
-  "name": "nodejs-express-jwt",
-  "version": "0.0.0",
-  "author": "Mark Khramko <markkhramko@gmail.com>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/MarkKhramko/nodejs-express-jwt.git"
-  },
-  "homepage": "https://github.com/MarkKhramko/nodejs-express-jwt#readme",
-  "bugs": {
-    "url": "https://github.com/MarkKhramko/nodejs-express-jwt/issues"
-  },
-  "scripts": {
-    "start": "node ./app/app.js",
-    "dev": "cross-env NODE_ENV=development nodemon ./app/app.js",
-    "production": "cross-env NODE_ENV=production node ./app/app.js"
-  },
-  "jest": {
-    "globals": {
-      "__DEV__": true
-    },
-    "testEnvironment": "node",
-    "testPathIgnorePatterns": [
-      "/node_modules/"
-    ]
-  },
-  "dependencies": {
-    "bcrypt-nodejs": "^0.0.3",
-    "body-parser": "^1.18.2",
-    "compression": "^1.7.3",
-    "cors": "^2.8.4",
-    "dotenv": "^5.0.1",
-    "express": "^4.16.3",
-    "express-routes-mapper": "^1.0.2",
-    "helmet": "^3.12.0",
-    "jsonwebtoken": "^8.2.1",
-    "mysql2": "^1.5.3",
-    "pug": "^2.0.3",
-    "sequelize": "^6.0.0"
-  },
-  "devDependencies": {
-    "cross-env": "^5.1.4",
-    "nodemon": "^1.17.3"
-  }
+	"name": "nodejs-express-jwt",
+	"version": "0.0.0",
+	"author": "Mark Khramko <markkhramko@gmail.com>",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/MarkKhramko/nodejs-express-jwt.git"
+	},
+	"homepage": "https://github.com/MarkKhramko/nodejs-express-jwt#readme",
+	"bugs": {
+		"url": "https://github.com/MarkKhramko/nodejs-express-jwt/issues"
+	},
+	"scripts": {
+		"start": "babel-node ./app/app.js",
+		"dev": "cross-env NODE_ENV=development nodemon --ignore public/ --exec babel-node ./app/app.js",
+		"production": "cross-env NODE_ENV=production babel-node ./app/app.js"
+	},
+	"jest": {
+		"globals": {
+			"__DEV__": true
+		},
+		"testEnvironment": "node",
+		"testPathIgnorePatterns": [
+			"/node_modules/"
+		]
+	},
+	"dependencies": {
+		"bcrypt-nodejs": "^0.0.3",
+		"body-parser": "^1.18.2",
+		"compression": "^1.7.3",
+		"cors": "^2.8.4",
+		"dotenv": "^5.0.1",
+		"express": "^4.16.3",
+		"express-routes-mapper": "^1.0.2",
+		"helmet": "^3.21.2",
+		"jsonwebtoken": "^8.2.1",
+		"mysql2": "^1.5.3",
+		"pug": "^2.0.3",
+		"sequelize": "^6.0.0"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.7.4",
+		"@babel/core": "^7.7.4",
+		"@babel/node": "^7.7.4",
+		"@babel/preset-env": "^7.7.4",
+		"babel-plugin-module-resolver": "^3.2.0",
+		"cross-env": "^5.1.4",
+		"nodemon": "^1.17.3"
+	}
 }

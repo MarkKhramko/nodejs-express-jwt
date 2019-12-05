@@ -1,4 +1,4 @@
-const JWTService = require('../services/auth.service');
+const JWTService = require('#services/auth.service');
 
 module.exports = (req, res, next) => {
 
