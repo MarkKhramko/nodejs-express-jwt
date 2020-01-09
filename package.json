@@ -29,23 +29,24 @@
 		"bcrypt-nodejs": "^0.0.3",
 		"body-parser": "^1.18.2",
 		"compression": "^1.7.3",
+		"core-js": "^2.6.11",
 		"cors": "^2.8.4",
-		"dotenv": "^5.0.1",
+		"dotenv": "^8.2.0",
 		"express": "^4.16.3",
 		"express-routes-mapper": "^1.0.2",
 		"helmet": "^3.21.2",
 		"jsonwebtoken": "^8.2.1",
-		"mysql2": "^1.5.3",
+		"mysql2": "^2.1.0",
 		"pug": "^2.0.3",
-		"sequelize": "^6.0.0"
+		"sequelize": "^5.21.3"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.7.4",
 		"@babel/core": "^7.7.4",
 		"@babel/node": "^7.7.4",
 		"@babel/preset-env": "^7.7.4",
-		"babel-plugin-module-resolver": "^3.2.0",
-		"cross-env": "^5.1.4",
-		"nodemon": "^1.17.3"
+		"babel-plugin-module-resolver": "^4.0.0",
+		"cross-env": "^6.0.3",
+		"nodemon": "^2.0.2"
 	}
 }
