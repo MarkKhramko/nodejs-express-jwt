@@ -76,7 +76,7 @@ We use [Sequelize](http://docs.sequelizejs.com/) as ORM, if you want further inf
 Example Controller for all **CRUD** oparations:
 
 ```js
-const Model = require('../models/Model');
+const Model = require('#models/Model');
 
 const ModelController = () => {
   const create = (req, res) => {
@@ -228,10 +228,10 @@ Example User Model:
 const Sequelize = require('sequelize');
 
 // for passwords encryption
-const bcryptSevice = require('../services/bcrypt.service');
+const bcryptSevice = require('#services/bcrypt.service');
 
 // the DB connection
-const sequelize = require('../../config/database');
+const sequelize = require('#config/database');
 
 // hooks are functions that can run before or after a specific event
 const hooks = {
@@ -304,7 +304,7 @@ To use this policy on all routes that only admins are allowed:
 app.js
 
 ```js
-const adminPolicy = require('./policies/admin.policy');
+const adminPolicy = require('#policies/admin.policy');
 
 app.all('/admin/*', (req,res,next) => adminPolicy(req,res,next));
 ```
@@ -314,7 +314,7 @@ Or for one specific route
 app.js
 
 ```js
-const adminPolicy = require('./policies/admin.policy');
+const adminPolicy = require('#policies/admin.policy');
 
 app.get('/admin/myroute',
   (req,res,next) => adminPolicy(req,res,next),
