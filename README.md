@@ -2,11 +2,11 @@
 
 > Express REST API Boilerplate with JWT Authentication and support for MySQL and PostgreSQL
 
-- authentication via [JWT](https://jwt.io/)
-- routes mapping via [express-routes-mapper](https://github.com/aichbauer/express-routes-mapper)
-- environments for `development`, `testing`, and `production`
-- built with [npm scripts](#npm-scripts)
-- check the example for User model and User controller, with jwt authentication - [installation instructions](#install-and-use).
+- Compilation via [Babel](https://babeljs.io/)
+- Authentication via [JWT](https://jwt.io/)
+- Routes mapping via [express-routes-mapper](https://github.com/aichbauer/express-routes-mapper)
+- Environments for `development`, `testing`, and `production`
+- Check the example for User model and User controller, with JWT authentication - [installation instructions](#install-and-use).
 
 ## Table of Contents
 
@@ -45,7 +45,7 @@ $ cp .env.example .env
 # ...
 # if you want to use postgresql (optional)
 $ npm install -S pg pg-hstore
-# start the application
+# start the application (without code watcher)
 $ npm start
 #
 # OR
@@ -236,7 +236,7 @@ const sequelize = require('#config/database');
 // hooks are functions that can run before or after a specific event
 const hooks = {
   beforeCreate(user) {
-    user.password = bcryptSevice.password(user);
+    user.password = bcryptSevice.hashPassword(user);
   }
 };
 
@@ -400,22 +400,22 @@ Default dialect for the application is MySQL. To switch for PostgreSQL, type `DB
 
 There are no automation tool or task runner like [grunt](https://gruntjs.com/) or [gulp](http://gulpjs.com/) used for this boilerplate. These boilerplate only uses npm scripts for automatization.
 
-### npm start
+### npm run dev
 
 This is the entry for a developer. This command:
 
-- runs **nodemon watch task** for the all files conected to `.app/app.js`
-- sets the **environment variable** `NODE_ENV` to `development`
-- opens the db connection for `development`
-- starts the server on 127.0.0.1:APP_PORT
+- runs **nodemon watch task** for the all files conected to `.app/app.js`, except `./public` directory
+- Reads **environment variable** `NODE_ENV` from `.env`
+- Opens the db connection for `development`
+- Starts the server on 127.0.0.1:APP_PORT
 
 ## npm run production
 
 This command:
 
-- sets the **environment variable** to `production`
-- opens the db connection for `production`
-- starts the server on 127.0.0.1:APP_PORT
+- Sets the **environment variable** to `production`
+- Opens the db connection for `production`
+- Starts the server on 127.0.0.1:APP_PORT
 
 Before running on production you have to set the **environment vaiables**:
 
@@ -430,8 +430,7 @@ Before running on production you have to set the **environment vaiables**:
 
 ### Other commands
 
-- `npm run dev` - simply start the server without a watcher
-- `npm run nodemon` - same as `npm start`
+- `npm start` - Simply start the server without a watcher;
 
 ## LICENSE
 
