@@ -49,7 +49,7 @@ const UsersController = () => {
 				return res.status(400).json({ msg: 'Bad Request: User not found' });
 			}
 
-			if (bcryptService.comparePassword(password, user.password)) {
+			if (bcryptService.comparePasswords(password, user.password)) {
 				const token = authService.issue({ id: user.id });
 
 				return res.status(200).json({

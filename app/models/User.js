@@ -5,7 +5,7 @@ const sequelize = require('#config/database');
 
 const hooks = {
 	beforeCreate(user) {
-		user.password = bcryptSevice.password(user);
+		user.password = bcryptSevice.hashPassword(user);
 	},
 };
 
