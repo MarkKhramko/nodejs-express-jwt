@@ -64,11 +64,13 @@ app.use('/api/private', mapRoutes(config.api.privateRoutes, 'app/controllers/api
 app.use('/', mapRoutes(config.web.publicRoutes, 'app/controllers/web/'));
 
 server.listen(config.port, () => {
-	if (environment !== 'production' &&
-		environment !== 'development' &&
-		environment !== 'testing'
-	) {
-		console.error(`NODE_ENV is set to ${environment}, but only "production", "testing" and "development" are valid.`);
+	const availableEnvironments = [
+		'production',
+		'development',
+		'testing'
+	];
+	if (availableEnvironments.indexOf(environment) === -1) {
+		console.error(`NODE_ENV is set to ${environment}, but only ${availableEnvironments.toString()} are valid.`);
 		process.exit(1);
 	} 
 	else {
