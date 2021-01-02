@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
+const Config = require('config/jwt');
 
-const secret = process.env.NODE_ENV === 'production' ? process.env.JWT_SECRET : 'secret';
+const { secret, expiresIn } = Config;
 
 module.exports = {
-	issue: (payload) => jwt.sign(payload, secret, { expiresIn: 10800 }),
+	issue: (payload) => jwt.sign(payload, secret, { expiresIn }),
 	verify: (token, cb) => jwt.verify(token, secret, {}, cb),
 };
