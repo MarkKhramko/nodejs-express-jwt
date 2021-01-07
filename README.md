@@ -102,7 +102,7 @@ const ModelController = () => {
       });
   };
 
-  const getAll = (req, res) {
+  const getAll = (req, res) => {
     Model
       .findAll()
       .then((models) => {
