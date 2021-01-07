@@ -66,16 +66,20 @@ const UsersController = () => {
 		}
 	};
 
-	const validate = (req, res) => {
-		const { token } = req.body;
+	const validate = async (req, res) => {
+		try{
+			const { token } = req.body;
 
-		authService
-			.verify(token, (err) => {
-				if (err) {
-					return res.status(401).json({ isValid: false, err: 'Invalid Token!' });
-				}
-				return res.status(200).json({ isValid: true });
-			});
+			// Compare token with local seed
+			await authService.verify(token);
+
+			// Everything's fine, send response
+			return res.status(200).json({ isValid: true, msg: "Valid Token" });
+		}
+		catch(error){
+			// In any error case, we send token not valid
+			return res.status(401).json({ isValid: false, err: 'Invalid Token!' });
+		}
 	};
 
 	const getAll = async (req, res) => {
@@ -94,7 +98,7 @@ const UsersController = () => {
 		register,
 		login,
 		validate,
-		getAll,
+		getAll
 	};
 };
 

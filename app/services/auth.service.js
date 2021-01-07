@@ -5,5 +5,12 @@ const { secret, expiresIn } = Config;
 
 module.exports = {
 	issue: (payload) => jwt.sign(payload, secret, { expiresIn }),
-	verify: (token, cb) => jwt.verify(token, secret, {}, cb),
+	verify: async (token) => {
+		jwt.verify(token, secret, {}, (err, parsedToken)=>{
+			if (!!err)
+				return Promise.reject(err);
+
+			return Promise.resolve(parsedToken);
+		});
+	}
 };
