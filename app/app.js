@@ -40,7 +40,7 @@ app.set('view engine', 'pug');
 // Set folder for static contents.
 app.use(express.static('public'));
 
-// secure express app
+// Secure express app.
 app.use(helmet({
 	dnsPrefetchControl: false,
 	frameguard: false,
@@ -64,4 +64,31 @@ server.listen(serverConfig.port, () => {
 		console.log('\x1b[1m', `server is running on port: ${serverConfig.port}`, '\x1b[0m');
 	}
 	return DB;
+});
+// Initialize server\
+
+function _gracefulShutdown(exit=false) {
+	console.warn('Received SIGINT or SIGTERM. Shutting down gracefully...');
+	const exitCode = exit ? 1 : 0;
+
+	server.close(() => {
+		console.info('Closed out remaining connections.');
+		process.exit(exitCode);
+	});
+
+	// Force stop after 5 seconds:
+	setTimeout(() => {
+		console.error('Could not close connections in time, forcefully shutting down');
+		process.exit(exitCode);
+	}, 5*1000);
+}
+
+process.on('unhandledRejection', (reason, p) => {
+	console.error(reason, 'Unhandled Rejection at Promise', p);
+})
+	
+process.on('uncaughtException', err => {
+	console.error(err, 'Uncaught Exception thrown');
+	
+	_gracefulShutdown(true);
 });
