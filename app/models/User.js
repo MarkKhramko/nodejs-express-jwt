@@ -21,9 +21,17 @@ const User = sequelize.define('User', {
 	},
 }, { hooks, tableName });
 
+User.findOneByEmail = function(email) {
+	const query = {
+		where: {
+			email
+		}
+	};
+	return this.findOne(query);
+}
 
-User.prototype.toJSON = function () {
-	const values = Object.assign({}, this.get());
+User.prototype.toJSON = function() {
+	const values = { ...this.get() };
 	delete values.password;
 	return values;
 };

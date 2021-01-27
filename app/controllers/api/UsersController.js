@@ -1,104 +1,179 @@
+// Reference models.
 const User = require('#models/User');
+
+// JWT service.
 const authService = require('#services/auth.service');
+// Password hash and compare service.
 const bcryptService = require('#services/bcrypt.service');
 
-const processError = (err, req, res) => {
-	if (err.original.code === 'ER_DUP_ENTRY') {
-		const { body } = req;
-		return res.status(500).json({ msg: `User with email: ${body.email} already exists.` });
+// Reponse protocols.
+const { 
+	createOKResponse,
+	createErrorResponse
+} = require('#services/responses/api');
+
+
+const _processError = (error, req, res) => {
+	// Default error message.
+	let errorMessage = error?.message ?? 'Internal server error';
+	// Default HTTP status code.
+	let statusCode = 500;
+
+	if (error.name === 'ValidationError'){
+		errorMessage = "Invalid email OR password input";
+		statusCode = 402;
 	}
-	return res.status(500).json({ msg: 'Internal server error' });
+	if (error.name === 'Unauthorized') {
+		errorMessage = 'Email or password are incorrect.';
+		statusCode = 406;
+	}
+	else if (error.name === 'UserNotFound'){
+		errorMessage = "Such user doesn't exist";
+		statusCode = 400;
+	}
+	else if (error.name === 'InvalidToken') {
+		errorMessage = 'Invalid token';
+		statusCode = 401;
+	}
+	// Perform your process here...
+
+	return createErrorResponse({
+		res, 
+		error: {
+			message: errorMessage
+		},
+		status: statusCode
+	});
 };
 
 const UsersController = () => {
-	const register = async (req, res) => {
+	const _register = async (req, res) => {
 		try{
-			const { body } = req;
+			// Extract request input.
 			const data = {
-				email: body.email,
-				password: body.password,
+				email: req.body?.email,
+				password: req.body?.password,
 			};
+
+			// Try to create new user.
 			const user = await User.create(data);
+			// Issue new JWT.
 			const token = authService.issue({ id: user.id });
-			return res.status(200).json({
-				token,
-				user
+
+			return createOKResponse({
+				res, 
+				content:{
+					token,
+					user
+				}
 			});
 		}
 		catch(error){
-			console.error("UsersController.register error: ", { error });
-			return processError(error, req, res);
+			console.error("UsersController._register error: ", { error });
+			return _processError(error, req, res);
 		}
 	};
 
-	const login = async (req, res) => {
+	const _login = async (req, res) => {
 		try{
-			const { email, password } = req.body;
+			// Extract request input.
+			const { 
+				email,
+				password
+			} = req.body;
+
 			if (!email || email === undefined || !password || password === undefined) {
-				const error = new Error("Invalid email OR password input");
-				throw error;
+				// If bad input, throw ValidationError:
+				const err = new Error("Invalid email OR password input");
+				err.name = "ValidationError";
+				throw err;
 			}
 
-			const query = {
-				where: {
-					email
-				}
-			};
-			const user = await User.findOne(query);
-			if (!user){
-				return res.status(400).json({ msg: 'Bad Request: User not found' });
+			// Try to find user.
+			const user = await User.findOneByEmail(email);
+
+			if (!user) {
+				// If no such user was found, throw error with name UserNotFound:
+				const err = new Error('User not found');
+				err.name = "UserNotFound";
+				throw err;
 			}
 
 			if (bcryptService.comparePasswords(password, user.password)) {
+				// If passwords matched, issue new token.
 				const token = authService.issue({ id: user.id });
 
-				return res.status(200).json({
-					token,
-					user
+				return createOKResponse({
+					res, 
+					content:{
+						token,
+						user
+					}
 				});
 			}
 
-			return res.status(401).json({ msg: 'Unauthorized' });
+			// Validation failed,
+			// throw custom error with name Unauthorized:
+			const err = new Error(`Validation failed.`);
+			err.name = "Unauthorized";
+			throw err;
 		}
 		catch(error){
-			console.error("UsersController.login error: ", { error });
-			return processError(error, req, res);
+			console.error("UsersController._login error: ", error);
+			return _processError(error, req, res);
 		}
 	};
 
-	const validate = async (req, res) => {
+	const _validate = async (req, res) => {
 		try{
 			const { token } = req.body;
 
-			// Compare token with local seed
+			// Compare token with local seed.
 			await authService.verify(token);
 
-			// Everything's fine, send response
-			return res.status(200).json({ isValid: true, msg: "Valid Token" });
+			// Everything's fine, send response.
+			return createOKResponse({
+				res,
+				content:{
+					isValid: true,
+					message: "Valid Token"
+				}
+			});
 		}
 		catch(error){
-			// In any error case, we send token not valid
-			return res.status(401).json({ isValid: false, err: 'Invalid Token!' });
+			// In any error case, we send token not valid:
+			// Create custom error with name InvalidToken.
+			const err = new Error('Invalid Token!');
+			err.name = "InvalidToken";
+			return _processError(err, req, res);
 		}
 	};
 
-	const getAll = async (req, res) => {
+	const _getAll = async (req, res) => {
 		try{
+			// Select all users from DB.
 			const users = await User.findAll();
-			return res.status(200).json({ users });
+
+			// Everything's fine, send response,
+			return createOKResponse({
+				res, 
+				content:{
+					users
+				}
+			});
 		}
 		catch(error){
-			console.error("UsersController.getAll error: ", { error });
-			return processError(error, req, res);
+			console.error("UsersController._getAll error: ", error);
+			return _processError(error, req, res);
 		}
 	};
 
 
 	return {
-		register,
-		login,
-		validate,
-		getAll
+		register: _register,
+		login: _login,
+		validate: _validate,
+		getAll: _getAll
 	};
 };
 
