@@ -1,6 +1,6 @@
 {
 	"name": "nodejs-express-jwt",
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"author": "Mark Khramko <markkhramko@gmail.com>",
 	"license": "MIT",
 	"repository": {
@@ -14,39 +14,31 @@
 	"scripts": {
 		"start": "babel-node ./app/app.js",
 		"dev": "cross-env NODE_ENV=development nodemon --ignore public/ --exec babel-node ./app/app.js",
-		"production": "cross-env NODE_ENV=production babel-node ./app/app.js"
-	},
-	"jest": {
-		"globals": {
-			"__DEV__": true
-		},
-		"testEnvironment": "node",
-		"testPathIgnorePatterns": [
-			"/node_modules/"
-		]
+		"production": "cross-env NODE_ENV=production babel-node ./app/app.js",
+		"migrate": "babel-node ./migrator/start.js"
 	},
 	"dependencies": {
 		"bcrypt": "^5.0.0",
-		"body-parser": "^1.18.2",
-		"compression": "^1.7.3",
+		"body-parser": "^1.19.0",
+		"compression": "^1.7.4",
 		"core-js": "^2.6.11",
-		"cors": "^2.8.4",
+		"cors": "^2.8.5",
 		"dotenv": "^8.2.0",
-		"express": "^4.16.3",
-		"express-routes-mapper": "^1.0.2",
-		"helmet": "^3.22.0",
-		"jsonwebtoken": "^8.2.1",
-		"mysql2": "^2.1.0",
-		"pug": "^2.0.3",
-		"sequelize": "^5.21.5"
+		"express": "^4.17.1",
+		"express-routes-mapper": "^1.1.0",
+		"helmet": "^4.4.1",
+		"jsonwebtoken": "^8.5.1",
+		"mysql2": "^2.2.5",
+		"pug": "^3.0.0",
+		"sequelize": "^6.5.0"
 	},
 	"devDependencies": {
-		"@babel/cli": "^7.8.4",
-		"@babel/core": "^7.9.0",
-		"@babel/node": "^7.8.7",
-		"@babel/preset-env": "^7.9.0",
-		"babel-plugin-module-resolver": "^4.0.0",
-		"cross-env": "^6.0.3",
-		"nodemon": "^2.0.2"
+		"@babel/cli": "^7.12.10",
+		"@babel/core": "^7.12.10",
+		"@babel/node": "^7.12.10",
+		"@babel/preset-env": "^7.12.11",
+		"babel-plugin-module-resolver": "^4.1.0",
+		"cross-env": "^7.0.3",
+		"nodemon": "^2.0.7"
 	}
 }
