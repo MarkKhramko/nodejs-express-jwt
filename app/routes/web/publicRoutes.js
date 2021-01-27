@@ -1,4 +1,3 @@
 module.exports = {
-	'GET /': 'HomePageController.getHomePage',
-	'GET /errors/:errorCode': 'ErrorPagesController.getErrorPage'
+	'GET /': 'HomePageController.getHomePage'
 };
