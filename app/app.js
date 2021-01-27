@@ -10,8 +10,6 @@ const mapRoutes = require('express-routes-mapper');
 const helmet = require('helmet');
 // Cross-origin
 const cors = require('cors');
-// Gzip compression
-const compression = require('compression');
 
 /**
  * Server configuration
@@ -29,9 +27,6 @@ const environment = process.env.NODE_ENV;
 const app = express();
 const server = http.Server(app);
 const DB = dbService(environment).start();
-
-// Enable gzip compression
-app.use(compression());
 
 // Allow cross origin requests
 // configure to only allow requests from certain origins
