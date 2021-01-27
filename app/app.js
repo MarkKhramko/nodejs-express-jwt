@@ -1,40 +1,43 @@
 /**
- * Third party libraries
+ * Main application file:
  */
-require('dotenv').config();
+
+const environments = require('#config/envinorments');
+// Middleware for parsing requests bodies.
 const bodyParser = require('body-parser');
+// Express.
 const express = require('express');
 const http = require('http');
-const mapRoutes = require('express-routes-mapper');
-// Security
+// Mild security.
 const helmet = require('helmet');
-// Cross-origin
+// Cross-origin requests middleware.
 const cors = require('cors');
 
-/**
- * Server configuration
- */
-const config = require('#config/');
+// Server configuration:
+// ORM.
 const dbService = require('#services/db.service');
-const auth = require('#policies/auth.policy');
+// Port info.
+const serverConfig = require('#config/server');
+// Routes.
+const routes = require('#routes/');
+// Server configuration\
 
-// Environment: development, staging, testing, production
-const environment = process.env.NODE_ENV;
-
-/**
- * Express application
- */
+// Express application.
 const app = express();
+// HTTP server (Do not use HTTPS, manage TLS with some proxy, like Nginx).
 const server = http.Server(app);
-const DB = dbService(environment).start();
+// Initialize ORM.
+const DB = dbService(environments.current).start();
 
 // Allow cross origin requests
-// configure to only allow requests from certain origins
+// (configure to only allow requests from certain origins).
 app.use(cors());
 
-// Set views path, template engine and default layout
+// Set views path.
 app.set('views', __dirname+'/views');
+// Set template engine (Pug by default).
 app.set('view engine', 'pug');
+// Set folder for static contents.
 app.use(express.static('public'));
 
 // secure express app
@@ -44,32 +47,21 @@ app.use(helmet({
 	ieNoOpen: false,
 }));
 
-// Parsing the request bodies
+// Parsing the request bodies.
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// Secure private routes with jwt authentication middleware
-app.all('/api/private/*', (req, res, next) => auth(req, res, next));
+// Setup routes.
+app.use(routes);
 
-// Set API routes for express appliction
-app.use('/api', mapRoutes(config.api.publicRoutes, 'app/controllers/api/'));
-app.use('/api/private', mapRoutes(config.api.privateRoutes, 'app/controllers/api/'));
-
-// Set web routes for express appliction
-app.use('/', mapRoutes(config.web.publicRoutes, 'app/controllers/web/'));
-
-server.listen(config.port, () => {
-	const availableEnvironments = [
-		'production',
-		'development',
-		'testing'
-	];
-	if (availableEnvironments.indexOf(environment) === -1) {
-		console.error(`NODE_ENV is set to ${environment}, but only ${availableEnvironments.toString()} are valid.`);
+// Initialize server:
+server.listen(serverConfig.port, () => {
+	if (environments.allowed.indexOf(environments.current) === -1) {
+		console.error(`NODE_ENV is set to ${environments.current}, but only ${environments.allowed.toString()} are valid.`);
 		process.exit(1);
 	} 
 	else {
-		console.log('\x1b[1m', `server is running on port: ${config.port}`, '\x1b[0m');
+		console.log('\x1b[1m', `server is running on port: ${serverConfig.port}`, '\x1b[0m');
 	}
 	return DB;
 });

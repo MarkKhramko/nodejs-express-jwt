@@ -3,9 +3,10 @@
 		["babel-plugin-module-resolver", {
 			"root": ["./"],
 			"alias": {
-				"#config": './config',
+				"#config": "./config",
 				"#models":"./app/models",
 				"#policies":"./app/policies",
+				"#routes": "./app/routes",
 				"#services":"./app/services"
 			}
 		}]
