@@ -1,10 +1,7 @@
-// Reference models.
-const User = require('#models/User');
-
+// User facade.
+const userFacade = require('#facades/user');
 // JWT service.
 const JWT = require('#services/jwt.service');
-// Password hash and compare service.
-const bcryptService = require('#services/bcrypt.service');
 
 // Reponse protocols.
 const { 
@@ -13,53 +10,53 @@ const {
 } = require('#services/responses/api');
 
 
-const _processError = (error, req, res) => {
-	// Default error message.
-	let errorMessage = error?.message ?? 'Internal server error';
-	// Default HTTP status code.
-	let statusCode = 500;
+module.exports = UsersController;
 
-	if (error.name === 'ValidationError'){
-		errorMessage = "Invalid email OR password input";
-		statusCode = 402;
-	}
-	else if (error.name === 'Unauthorized') {
-		errorMessage = 'Email or password are incorrect.';
-		statusCode = 406;
-	}
-	else if (error.name === 'UserNotFound'){
-		errorMessage = "Such user doesn't exist";
-		statusCode = 400;
-	}
-	else if (error.name === 'InvalidToken') {
-		errorMessage = 'Invalid token';
-		statusCode = 401;
-	}
-	// Perform your process here...
+function UsersController() {
 
-	return createErrorResponse({
-		res, 
-		error: {
-			message: errorMessage
-		},
-		status: statusCode
-	});
-};
+	const _processError = (error, req, res) => {
+		// Default error message.
+		let errorMessage = error?.message ?? 'Internal server error';
+		// Default HTTP status code.
+		let statusCode = 500;
 
-const UsersController = () => {
+		if (error.name === 'ValidationError'){
+			errorMessage = "Invalid email OR password input";
+			statusCode = 402;
+		}
+		else if (error.name === 'Unauthorized') {
+			errorMessage = 'Email or password are incorrect.';
+			statusCode = 406;
+		}
+		else if (error.name === 'UserNotFound'){
+			errorMessage = "Such user doesn't exist";
+			statusCode = 400;
+		}
+		else if (error.name === 'InvalidToken') {
+			errorMessage = 'Invalid token';
+			statusCode = 401;
+		}
+		// Perform your custom process here...
+
+		// Send error response with provided status code.
+		return createErrorResponse({
+			res, 
+			error: {
+				message: errorMessage
+			},
+			status: statusCode
+		});
+	}
+
 	const _register = async (req, res) => {
 		try{
-			// Extract request input.
-			const data = {
-				email: req.body?.email,
-				password: req.body?.password,
-			};
+			// Extract request input:
+			const email = req.body?.email;
+			const password = req.body?.password;
 
-			// Try to create new user.
-			const user = await User.create(data);
-			// Issue new JWT.
-			const token = JWT.issue({ id: user.id });
+			const [token, user] = await userFacade.register({ email, password });
 
+			// Everything's fine, send response.
 			return createOKResponse({
 				res, 
 				content:{
@@ -72,7 +69,7 @@ const UsersController = () => {
 			console.error("UsersController._register error: ", { error });
 			return _processError(error, req, res);
 		}
-	};
+	}
 
 	const _login = async (req, res) => {
 		try{
@@ -89,40 +86,22 @@ const UsersController = () => {
 				throw err;
 			}
 
-			// Try to find user.
-			const user = await User.findOneByEmail(email);
+			const [token, user] = await userFacade.login({ email, password });
 
-			if (!user) {
-				// If no such user was found, throw error with name UserNotFound:
-				const err = new Error('User not found');
-				err.name = "UserNotFound";
-				throw err;
-			}
-
-			if (bcryptService.comparePasswords(password, user.password)) {
-				// If passwords matched, issue new token.
-				const token = JWT.issue({ id: user.id });
-
-				return createOKResponse({
-					res, 
-					content:{
-						token,
-						user
-					}
-				});
-			}
-
-			// Validation failed,
-			// throw custom error with name Unauthorized:
-			const err = new Error(`Validation failed.`);
-			err.name = "Unauthorized";
-			throw err;
+			// Everything's fine, send response.
+			return createOKResponse({
+				res, 
+				content:{
+					token,
+					user
+				}
+			});
 		}
 		catch(error){
 			console.error("UsersController._login error: ", error);
 			return _processError(error, req, res);
 		}
-	};
+	}
 
 	const _validate = async (req, res) => {
 		try{
@@ -147,34 +126,35 @@ const UsersController = () => {
 			err.name = "InvalidToken";
 			return _processError(err, req, res);
 		}
-	};
+	}
 
-	const _getAll = async (req, res) => {
+	// _getFullName is a method, protected by JWT policy,
+	// so we will have token in request, that we will use:
+	const _getFullName = async (req, res) => {
 		try{
-			// Select all users from DB.
-			const users = await User.findAll();
+			const userId = req?.token?.id;
 
-			// Everything's fine, send response,
+			const [ fullName ] = await userFacade.getFullName({ userId });
+
+			// Everything's fine, send response.
 			return createOKResponse({
 				res, 
 				content:{
-					users
+					fullName
 				}
 			});
 		}
 		catch(error){
-			console.error("UsersController._getAll error: ", error);
+			console.error("UsersController._getFullName error: ", error);
 			return _processError(error, req, res);
 		}
-	};
+	}
 
 
 	return {
 		register: _register,
 		login: _login,
 		validate: _validate,
-		getAll: _getAll
-	};
-};
-
-module.exports = UsersController;
+		getFullName: _getFullName
+	}
+}

@@ -1,3 +1,3 @@
 module.exports = {
-	'GET /users': 'UsersController.getAll',
+	'GET /users/name': 'UsersController.getFullName',
 };

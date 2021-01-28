@@ -4,6 +4,8 @@
 			"root": ["./"],
 			"alias": {
 				"#configs": "./configs",
+				"#facades": "./app/facades",
+				"#factories": "./app/factories",
 				"#models":"./app/models",
 				"#policies":"./app/policies",
 				"#routes": "./app/routes",
