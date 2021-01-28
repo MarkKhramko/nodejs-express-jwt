@@ -52,7 +52,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Setup routes.
-app.use(routes);
+app.use(routes({ app }));
 
 // Initialize server:
 server.listen(serverConfig.port, () => {

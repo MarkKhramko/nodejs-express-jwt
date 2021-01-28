@@ -14,9 +14,9 @@ const auth = require('#policies/auth.policy');
 // Mapper of routes to controllers.
 const mapRoutes = require('express-routes-mapper');
 
-function Routes(req, res, next) {
+function Routes(options={}) {
 	try{
-		const { app } = req;
+		const app = options?.app;
 
 		apiOptions.verions.all.map(versionString => {
 			// Secure private API routes with JWT authentication middleware.
@@ -31,7 +31,7 @@ function Routes(req, res, next) {
 		app.use('/', mapRoutes(webRoutes.public, `app/controllers/web/`));
 
 		// Everything's ok, continue.
-		next();
+		return (req, res, next)=>next();
 	}
 	catch(error){
 		const err = new Error(`Could not setup routes: ${error.message}`);
