@@ -4,24 +4,32 @@ const {
 	createErrorResponse
 } = require('#services/responses/api');
 
-const _processError = (error, req, res) => {
-	// Default error message.
-	let errorMessage = error?.message ?? 'Internal server error';
-	// Default HTTP status code.
-	let statusCode = 500;
 
-	// Perform your process here...
+module.exports = APIController;
 
-	return createErrorResponse({
-		res, 
-		error: {
-			message: errorMessage
-		},
-		status: statusCode
-	});
-};
+function APIController() {
 
-const APIController = () => {
+	const _processError = (error, req, res) => {
+		// Default error message.
+		let errorMessage = error?.message ?? 'Internal server error';
+		// Default HTTP status code.
+		let statusCode = 500;
+
+		if (error.name === 'TypeError'){
+			errorMessage = "Type error. Check your console for details.";
+			statusCode = 402;
+		}
+		// Perform your custom process here...
+
+		// Send error response with provided status code.
+		return createErrorResponse({
+			res, 
+			error: {
+				message: errorMessage
+			},
+			status: statusCode
+		})
+	}
 
 	const _getStatus = (req, res) => {
 		try{
@@ -44,11 +52,9 @@ const APIController = () => {
 			console.error("APIController._getStatus error: ", error);
 			return _processError(error, req, res);
 		}
-	};
+	}
 
 	return {
 		getStatus: _getStatus
-	};
-};
-
-module.exports = APIController;
+	}
+}
