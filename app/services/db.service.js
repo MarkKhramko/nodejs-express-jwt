@@ -1,4 +1,4 @@
-const database = require('#config/database');
+const database = require('#configs/database');
 
 const dbService = (environment) => {
 	const authenticateDB = () => (

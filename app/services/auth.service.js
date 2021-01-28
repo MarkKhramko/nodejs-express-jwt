@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const Config = require('config/jwt');
+const Config = require('#configs/jwt');
 
 const { secret, expiresIn } = Config;
 

@@ -3,7 +3,7 @@
  */
 
 // API options.
-const apiOptions = require('#config/api');
+const apiOptions = require('#configs/api');
 // Routes:
 const apiRoutes = require('#routes/api');
 const webRoutes = require('#routes/web');

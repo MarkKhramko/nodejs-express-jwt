@@ -3,7 +3,7 @@
 		["babel-plugin-module-resolver", {
 			"root": ["./"],
 			"alias": {
-				"#config": "./config",
+				"#configs": "./configs",
 				"#models":"./app/models",
 				"#policies":"./app/policies",
 				"#routes": "./app/routes",

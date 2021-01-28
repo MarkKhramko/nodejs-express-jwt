@@ -2,7 +2,7 @@
  * Main application file:
  */
 
-const environments = require('#config/envinorments');
+const environments = require('#configs/envinorments');
 // Middleware for parsing requests bodies.
 const bodyParser = require('body-parser');
 // Express.
@@ -17,7 +17,7 @@ const cors = require('cors');
 // ORM.
 const dbService = require('#services/db.service');
 // Port info.
-const serverConfig = require('#config/server');
+const serverConfig = require('#configs/server');
 // Routes.
 const routes = require('#routes/');
 // Server configuration\
