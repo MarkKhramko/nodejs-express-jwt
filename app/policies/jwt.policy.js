@@ -1,4 +1,4 @@
-const JWTService = require('#services/auth.service');
+const JWT = require('#services/jwt.service');
 
 module.exports = (req, res, next) => {
 
@@ -31,7 +31,7 @@ module.exports = (req, res, next) => {
 		return res.status(401).json({ msg: 'No Authorization was found' });
 	}
 
-	return JWTService.verify(tokenToVerify, (err, thisToken) => {
+	return JWT.verify(tokenToVerify, (err, thisToken) => {
 		if (err) 
 			return res.status(401).json({ err });
 

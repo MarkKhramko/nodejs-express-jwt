@@ -2,7 +2,7 @@
 const User = require('#models/User');
 
 // JWT service.
-const authService = require('#services/auth.service');
+const JWT = require('#services/jwt.service');
 // Password hash and compare service.
 const bcryptService = require('#services/bcrypt.service');
 
@@ -23,7 +23,7 @@ const _processError = (error, req, res) => {
 		errorMessage = "Invalid email OR password input";
 		statusCode = 402;
 	}
-	if (error.name === 'Unauthorized') {
+	else if (error.name === 'Unauthorized') {
 		errorMessage = 'Email or password are incorrect.';
 		statusCode = 406;
 	}
@@ -58,7 +58,7 @@ const UsersController = () => {
 			// Try to create new user.
 			const user = await User.create(data);
 			// Issue new JWT.
-			const token = authService.issue({ id: user.id });
+			const token = JWT.issue({ id: user.id });
 
 			return createOKResponse({
 				res, 
@@ -101,7 +101,7 @@ const UsersController = () => {
 
 			if (bcryptService.comparePasswords(password, user.password)) {
 				// If passwords matched, issue new token.
-				const token = authService.issue({ id: user.id });
+				const token = JWT.issue({ id: user.id });
 
 				return createOKResponse({
 					res, 
@@ -128,8 +128,8 @@ const UsersController = () => {
 		try{
 			const { token } = req.body;
 
-			// Compare token with local seed.
-			await authService.verify(token);
+			// Validate token against local seed.
+			await JWT.verify(token);
 
 			// Everything's fine, send response.
 			return createOKResponse({

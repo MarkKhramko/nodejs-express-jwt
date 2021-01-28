@@ -9,7 +9,7 @@ const apiRoutes = require('#routes/api');
 const webRoutes = require('#routes/web');
 
 // Policies.
-const auth = require('#policies/auth.policy');
+const JWT = require('#policies/jwt.policy');
 
 // Mapper of routes to controllers.
 const mapRoutes = require('express-routes-mapper');
@@ -20,7 +20,7 @@ function Routes(options={}) {
 
 		apiOptions.verions.all.map(versionString => {
 			// Secure private API routes with JWT authentication middleware.
-			app.all(`/api/${versionString}/private/*`, auth);
+			app.all(`/api/${versionString}/private/*`, JWT);
 
 			// Set API routes for express appliction
 			app.use(`/api/${versionString}`, mapRoutes(apiRoutes(versionString).public, 'app/controllers/api/'));
