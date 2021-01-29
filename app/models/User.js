@@ -1,36 +1,45 @@
-const Sequelize = require('sequelize');
-const bcryptSevice = require('#services/bcrypt.service');
-
+// ORM:
+const { DataTypes } = require('sequelize');
 const sequelize = require('#configs/database');
 
-const hooks = {
-	beforeCreate(user) {
-		user.password = bcryptSevice.hashPassword(user);
-	},
-};
+// Password hasher.
+const bcryptSevice = require('#services/bcrypt.service');
 
-const tableName = 'users';
 
-const User = sequelize.define('User', {
-	email: {
-		type: Sequelize.STRING,
-		unique: true,
-		allowNull: false
+const User = sequelize.define(
+	'User',
+	{
+		email: {
+			type: DataTypes.STRING(255),
+			unique: true,
+			allowNull: false
+		},
+		password: {
+			type: DataTypes.STRING(255),
+			allowNull: false
+		},
+		firstName: {
+			type: DataTypes.STRING(80),
+			allowNull: true
+		},
+		lastName: {
+			type: DataTypes.STRING(175),
+			allowNull: true
+		}
 	},
-	password: {
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	name: {
-		type: Sequelize.STRING,
-		allowNull: true
-	},
-	lastName: {
-		type: Sequelize.STRING,
-		allowNull: true
+	{
+		timestamps: true
 	}
-}, { hooks, tableName });
+);
 
+// Hooks:
+User.beforeCreate((user, options) => {
+	// Hash user's password.
+	user.password = bcryptSevice.hashPassword(user);
+});
+// Hooks\
+
+// Static methods:
 User.findById = function(userId) {
 	return this.findByPk(userId);
 }
@@ -43,9 +52,11 @@ User.findOneByEmail = function(email) {
 	};
 	return this.findOne(query);
 }
+// Static methods\
 
+// Instance methods:
 User.prototype.fullName = function() {
-	return `${this.name ?? ""} ${this.lastName ?? ""}`.trim();
+	return `${this.firstName ?? ""} ${this.lastName ?? ""}`.trim();
 }
 
 User.prototype.toJSON = function() {
@@ -53,5 +64,6 @@ User.prototype.toJSON = function() {
 	delete values.password;
 	return values;
 };
+// Instance methods\
 
 module.exports = User;
