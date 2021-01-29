@@ -7,7 +7,8 @@
 		"start": "babel-node ./app/app.js",
 		"dev": "cross-env NODE_ENV=development nodemon --ignore public/ --exec babel-node ./app/app.js",
 		"production": "cross-env NODE_ENV=production babel-node ./app/app.js",
-		"migrate": "babel-node ./migrator/start.js"
+		"db:migrate": "babel-node ./migrator/start.js",
+		"db:seed": "babel-node ./migrator/seeder.js"
 	},
 	"dependencies": {
 		"bcrypt": "^5.0.0",
