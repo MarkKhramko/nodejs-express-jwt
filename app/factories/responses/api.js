@@ -3,7 +3,13 @@ const FORMATS = {
 	XML: "XML"
 }
 
-/* 
+
+module.exports = {
+	createOKResponse: _createOKResponse,
+	createErrorResponse: _createErrorResponse
+}
+
+/*
 	Format for all API responses will be JSON
 	{
 		content: {...}
@@ -14,8 +20,7 @@ const FORMATS = {
 	If error is not present, error should be null.
 	If error is present, content can be null (But it's not required).
 */
-
-const _createGenericResponse = (options={ res:null, status:200, content:{}, error:null, format:FORMATS.JSON }) => {
+function _createGenericResponse(options={ res:null, status:200, content:{}, error:null, format:FORMATS.JSON }) {
 	try{
 		const data = {
 			content: options?.content ?? null,
@@ -41,13 +46,15 @@ const _createGenericResponse = (options={ res:null, status:200, content:{}, erro
 	}
 }
 
-// Method should be called on all successful respones:
-// options = {
-//		res,
-//		content,
-//		format
-// }
-const _createOKResponse = (options) => {
+/**
+ * Sends response with status code 200.
+ * Should be called on all successful respones.
+ *
+ * @param <Object> res
+ * @param <Object> content
+ * @param <String> format
+ */
+function _createOKResponse(options) {
 	return _createGenericResponse({ 
 		...options,
 		status:200,
@@ -55,22 +62,20 @@ const _createOKResponse = (options) => {
 	});
 }
 
-// Method should be called on failed responses:
-// options = {
-//		res,
-//		error,
-//		status,
-//		format
-// }
-const _createErrorResponse = (options) => {
+/**
+ * Sends response with provided error code.
+ * Should be called on all failed respones.
+ *
+ * @param <Object> res
+ * @param <Object> error
+ * @param <Object> content (optional)
+ * @param <Int>		 status
+ * @param <String> format
+ */
+function _createErrorResponse(options) {
 	return _createGenericResponse({
 		...options,
 		status:options?.status,
 		format:options?.format ?? FORMATS.JSON
 	});
-}
-
-module.exports = {
-	createOKResponse: _createOKResponse,
-	createErrorResponse: _createErrorResponse
 }
