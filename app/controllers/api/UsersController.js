@@ -7,7 +7,7 @@ const JWT = require('#services/jwt.service');
 const { 
 	createOKResponse,
 	createErrorResponse
-} = require('#services/responses/api');
+} = require('#factories/responses/api');
 
 
 module.exports = UsersController;

@@ -2,7 +2,7 @@
 const {
 	createOKResponse,
 	createErrorResponse
-} = require('#services/responses/web');
+} = require('#factories/responses/web');
 
 const HomePageController = () => {
 

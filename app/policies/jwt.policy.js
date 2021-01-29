@@ -1,41 +1,55 @@
+// JWT Service.
 const JWT = require('#services/jwt.service');
+// Reponse protocols.
+const { createErrorResponse } = require("#factories/responses/api");
 
-module.exports = (req, res, next) => {
+const ACCESS_TOKEN_NAME = 'Authorization';
 
-	// Format of token: "Authorization: Bearer [token]" or "token: [token]"
-	let tokenToVerify;
+module.exports = async (req, res, next) => {
+	try{
+		// Format of token: "Authorization: Bearer [token]"
+		let tokenToVerify;
 
-	if (req.header('Authorization')) {
-		const parts = req.header('Authorization').split(' ');
+		// Check token in Header
+		if (req.header(ACCESS_TOKEN_NAME)) {
+			const parts = req.header(ACCESS_TOKEN_NAME).split(' ');
 
-		if (parts.length === 2) {
-			const scheme = parts[0];
-			const credentials = parts[1];
-
-			if (/^Bearer$/.test(scheme)) {
-				tokenToVerify = credentials;
+			if (parts.length === 2 && /^Bearer$/.test(parts[0])) {
+				tokenToVerify = parts[1];
 			} 
 			else {
-				return res.status(401).json({ msg: 'Format for Authorization: Bearer [token]' });
+				const error = new Error(`Format for ${ACCESS_TOKEN_NAME}: Bearer [token]`);
+				error.status = 401;
+				throw error;
 			}
+		}
+		// Check token in query
+		else if (!!req.query.token) {
+			tokenToVerify = req.query.token;
+			delete req.body.token;
+		}
+		// Check token in body
+		else if (!!req.body.token) {
+			tokenToVerify = req.body.token;
+			delete req.query.token;
 		} 
 		else {
-			return res.status(401).json({ msg: 'Format for Authorization: Bearer [token]' });
+			const error = new Error(`No ${ACCESS_TOKEN_NAME} was found`);
+			error.status = 401;
+			throw error;
 		}
-	} 
-	else if (req.body.token) {
-		tokenToVerify = req.body.token;
-		delete req.query.token;
-	} 
-	else {
-		return res.status(401).json({ msg: 'No Authorization was found' });
-	}
 
-	return JWT.verify(tokenToVerify, (err, thisToken) => {
-		if (err) 
-			return res.status(401).json({ err });
+		const parsedToken = await JWT.verifyAccessToken(tokenToVerify);
 
-		req.token = thisToken;
+		// Everything's good, procceed
+		req.token = parsedToken;
 		return next();
-	});
+	}
+	catch(error){
+		return createErrorResponse({
+			res, 
+			error,
+			status: error?.statusCode
+		});
+	}
 };

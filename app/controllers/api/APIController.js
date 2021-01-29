@@ -2,7 +2,7 @@
 const { 
 	createOKResponse,
 	createErrorResponse
-} = require('#services/responses/api');
+} = require('#factories/responses/api');
 
 
 module.exports = APIController;
