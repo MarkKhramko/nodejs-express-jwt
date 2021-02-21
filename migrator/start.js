@@ -1,25 +1,29 @@
+// Import config from .env file.
 require('dotenv').config();
-// Models to migrate
+// Models to migrate.
 require('./models');
-// require('./modelsMissing');
+// Connection to database
+const db = require('#services/db.service');
 
-const dbService = require('#services/db.service');
 
-const main = async ()=>{
-	try{
+async function _main() {
+	try {
 		if(process.env.NODE_ENV !== 'development'){
 			const error = new Error("Can not make any actions in non-dev env.");
 			throw error;
 		}
 
-		await dbService.migrate(true);
+		// Set 'force' to true if you want to rewrite database.
+		const force = true;
+		await db.migrate(process.env.NODE_ENV, force);
 		console.log("All models migrated.");
 		process.exit(0);
 	}
-	catch(error){
+	catch(error) {
 		console.error("Migrator error:", error);
 		process.exit(1);
 	}
 }
 
-main();
+// Start.
+_main();
