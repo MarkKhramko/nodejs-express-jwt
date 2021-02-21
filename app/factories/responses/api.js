@@ -79,3 +79,4 @@ function _createErrorResponse(options) {
 		format:options?.format ?? FORMATS.JSON
 	});
 }
+
