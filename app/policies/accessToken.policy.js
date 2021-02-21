@@ -2,15 +2,18 @@
 const JWT = require('#services/jwt.service');
 // Reponse protocols.
 const { createErrorResponse } = require("#factories/responses/api");
+// Custom error.
+const { Err } = require('#factories/errors');
 
+
+// Format of token: "Authorization: Bearer [token]"
 const ACCESS_TOKEN_NAME = 'Authorization';
 
 module.exports = async (req, res, next) => {
-	try{
-		// Format of token: "Authorization: Bearer [token]"
+	try {
 		let tokenToVerify;
 
-		// Check token in Header
+		// Check token in Header:
 		if (req.header(ACCESS_TOKEN_NAME)) {
 			const parts = req.header(ACCESS_TOKEN_NAME).split(' ');
 
@@ -18,38 +21,44 @@ module.exports = async (req, res, next) => {
 				tokenToVerify = parts[1];
 			} 
 			else {
-				const error = new Error(`Format for ${ACCESS_TOKEN_NAME}: Bearer [token]`);
-				error.status = 401;
-				throw error;
+				const err = new Err(`Format for ${ACCESS_TOKEN_NAME}: Bearer [token]`);
+				err.status = 401;
+				throw err;
 			}
 		}
-		// Check token in query
+		// Check token in query:
 		else if (!!req.query.token) {
 			tokenToVerify = req.query.token;
 			delete req.body.token;
 		}
-		// Check token in body
+		// Check token in body:
 		else if (!!req.body.token) {
 			tokenToVerify = req.body.token;
 			delete req.query.token;
 		} 
 		else {
-			const error = new Error(`No ${ACCESS_TOKEN_NAME} was found`);
-			error.status = 401;
-			throw error;
+			const err = new Err(`No ${ACCESS_TOKEN_NAME} was found`);
+			err.status = 401;
+			throw err;
 		}
 
-		const parsedToken = await JWT.verifyAccessToken(tokenToVerify);
+		const [ parsedToken ] = await JWT.verifyAccessToken(tokenToVerify);
 
-		// Everything's good, procceed
+		// Everything's good, procceed:
 		req.token = parsedToken;
 		return next();
 	}
-	catch(error){
+	catch(error) {
+		// If error is not our custom error, log it.
+		if (error.name !== Err.name)
+			console.error("refreshToken.policy error:", error);
+		else
+			error.name = 'ValidationError';
+
 		return createErrorResponse({
 			res, 
 			error,
-			status: error?.statusCode
+			status: error?.statusCode ?? 401
 		});
 	}
-};
+}
