@@ -75,7 +75,7 @@ function _createOKResponse(options) {
 function _createErrorResponse(options) {
 	return _createGenericResponse({
 		...options,
-		status:options?.status,
+		status:options?.status ?? 500,
 		format:options?.format ?? FORMATS.JSON
 	});
 }
