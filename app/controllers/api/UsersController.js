@@ -1,13 +1,15 @@
-// User facade.
-const userFacade = require('#facades/user');
-// JWT service.
+// Facades:
+const usersFacade = require('#facades/users');
+const jwtFacade = require('#facades/jwt.facade');
+// JWT Service.
 const JWT = require('#services/jwt.service');
-
 // Reponse protocols.
 const { 
 	createOKResponse,
 	createErrorResponse
 } = require('#factories/responses/api');
+// Custom error.
+const { Err } = require('#factories/errors');
 
 
 module.exports = UsersController;
@@ -20,23 +22,29 @@ function UsersController() {
 		// Default HTTP status code.
 		let statusCode = 500;
 
-		if (error.name === 'ValidationError'){
-			errorMessage = "Invalid email OR password input";
-			statusCode = 402;
+		switch(error.name) {
+			case('Unauthorized'):
+				errorMessage = 'Email or password are incorrect.';
+				statusCode = 406;
+				break;
+			case('ValidationError'):
+				errorMessage = "Invalid email OR password input";
+				statusCode = 402;
+				break;
+			case('InvalidToken'):
+				errorMessage = 'Invalid token or token expired';
+				statusCode = 401;
+				break;
+			case('UserNotFound'):
+				errorMessage = "Such user doesn't exist";
+				statusCode = 400;
+				break;
+
+			// Perform your custom processing here...
+
+			default:
+				break;
 		}
-		else if (error.name === 'Unauthorized') {
-			errorMessage = 'Email or password are incorrect.';
-			statusCode = 406;
-		}
-		else if (error.name === 'UserNotFound'){
-			errorMessage = "Such user doesn't exist";
-			statusCode = 400;
-		}
-		else if (error.name === 'InvalidToken') {
-			errorMessage = 'Invalid token';
-			statusCode = 401;
-		}
-		// Perform your custom process here...
 
 		// Send error response with provided status code.
 		return createErrorResponse({
@@ -48,36 +56,45 @@ function UsersController() {
 		});
 	}
 
+	// Auth:
 	const _register = async (req, res) => {
-		try{
+		try {
 			// Extract request input:
-			const email = req.body?.email;
-			const password = req.body?.password;
+			const email = req.body?.email
+			const password = req.body?.password
+			const firstName = req.body?.firstName
+			const lastName = req.body?.lastName
 
-			const [token, user] = await userFacade.register({ email, password });
+			// Create new one.
+			const [ tokens, user ] = await usersFacade.register({
+				email,
+				password,
+				firstName,
+				lastName
+			});
 
 			// Everything's fine, send response.
 			return createOKResponse({
 				res, 
 				content:{
-					token,
-					user
+					tokens,
+					// Convert user to JSON, to clear sensitive data (like password)
+					user:user.toJSON()
 				}
 			});
 		}
-		catch(error){
-			console.error("UsersController._register error: ", { error });
+		catch(error) {
+			console.error("UsersController._create error: ", error);
 			return _processError(error, req, res);
 		}
 	}
 
 	const _login = async (req, res) => {
-		try{
-			// Extract request input.
-			const { 
-				email,
-				password
-			} = req.body;
+		try {
+			// Extract request input:
+			const email = req.body?.email
+			const password = req.body?.password
+
 
 			if (!email || email === undefined || !password || password === undefined) {
 				// If bad input, throw ValidationError:
@@ -86,14 +103,15 @@ function UsersController() {
 				throw err;
 			}
 
-			const [token, user] = await userFacade.login({ email, password });
+			const [ tokens, user ] = await usersFacade.login({ email, password });
 
 			// Everything's fine, send response.
 			return createOKResponse({
 				res, 
 				content:{
-					token,
-					user
+					tokens,
+					// Convert user to JSON, to clear sensitive data (like password).
+					user: user.toJSON()
 				}
 			});
 		}
@@ -104,11 +122,11 @@ function UsersController() {
 	}
 
 	const _validate = async (req, res) => {
-		try{
+		try {
 			const { token } = req.body;
 
 			// Validate token against local seed.
-			await JWT.verify(token);
+			await JWT.verifyAccessToken(token);
 
 			// Everything's fine, send response.
 			return createOKResponse({
@@ -119,7 +137,9 @@ function UsersController() {
 				}
 			});
 		}
-		catch(error){
+		catch(error) {
+			console.error("UsersController._validate error: ", error);
+
 			// In any error case, we send token not valid:
 			// Create custom error with name InvalidToken.
 			const err = new Error('Invalid Token!');
@@ -128,15 +148,82 @@ function UsersController() {
 		}
 	}
 
-	// _getFullName is a method, protected by JWT policy,
-	// so we will have token in request, that we will use:
+	const _refresh = async (req, res) => {
+		try {
+			// Unwrap refresh token.
+			const refreshToken = req?.refreshToken;
+			if (!refreshToken){
+				const err = new Err("No refreshToken found");
+				err.name = "Unauthorized";
+				err.status = 401;
+				throw err;
+			}
+
+			// Everything's ok, issue new one.
+			const [ accessToken ] = await jwtFacade.refreshAccessToken({ refreshToken });
+
+			return createOKResponse({
+				res,
+				content:{ 
+					token: accessToken 
+				}
+			});
+		}
+		catch(error) {
+			console.error("UsersController._refresh error: ", error);
+
+			// In any error case, we send token not valid:
+			// Create custom error with name InvalidToken.
+			const err = new Error('Invalid Token!');
+			err.name = "InvalidToken";
+			return _processError(err, req, res);
+		}
+	}
+
+	const _logout = async (req, res) => {
+		try {
+			const refreshToken = req?.refreshToken;
+			if (!refreshToken){
+				const err = new Err("No refreshToken found");
+				err.name = "Unauthorized";
+				err.status = 401;
+				throw err;
+			}
+
+			// Everything's ok, destroy token.
+			const [ status ] = await jwtFacade.disableRefreshToken({ refreshToken });
+
+			return createOKResponse({
+				res, 
+				content:{
+					status,
+					loggedIn: status === true
+				}
+			});
+		}
+		catch(error) {
+			console.error("UsersController._logout error: ", error);
+			
+			// In any error case, we send token not valid:
+			// Create custom error with name InvalidToken.
+			const err = new Error('Invalid Token!');
+			err.name = "InvalidToken";
+			return _processError(err, req, res);
+		}
+	}
+	// Auth\
+
+	// Protected:
 	const _getFullName = async (req, res) => {
-		try{
+		try {
+			// Unwrap user's id.
 			const userId = req?.token?.id;
 
-			const [ fullName ] = await userFacade.getFullName({ userId });
+			// Try to get full name.
+			const [ fullName ] = await usersFacade.getFullName({ userId });
 
-			// Everything's fine, send response.
+			console.log({ fullName });
+
 			return createOKResponse({
 				res, 
 				content:{
@@ -144,17 +231,21 @@ function UsersController() {
 				}
 			});
 		}
-		catch(error){
+		catch(error) {
 			console.error("UsersController._getFullName error: ", error);
 			return _processError(error, req, res);
 		}
 	}
 
-
 	return {
+		// Auth:
 		register: _register,
 		login: _login,
 		validate: _validate,
-		getFullName: _getFullName
+		refresh: _refresh,
+		logout: _logout,
+
+		// Protected:
+		getFullName:_getFullName
 	}
 }
