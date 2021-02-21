@@ -1,19 +1,28 @@
 // Reference models.
 const User = require('#models/User');
-// JWT service.
-const JWT = require('#services/jwt.service');
+// JWT facade.
+const JWT = require('#facades/jwt.facade');
 // Password hash and compare service.
-const bcryptService = require('#services/bcrypt.service');
+const bcrypt = require('#services/bcrypt.service');
 // Custom error.
-const Err = require('#factories/error');
+const { Err } = require('#factories/errors');
 
 
 module.exports = {
+	// Auth:
 	register: _register,
 	login: _login,
+	// Auth\
+
+	// Private:
 	getFullName: _getFullName
+
+	// Add your methods here...
+
+	// Private\
 }
 
+// Auth:
 async function _register({ email, password }) {
 	try{
 		// Try to create new user.
@@ -22,16 +31,15 @@ async function _register({ email, password }) {
 			password
 		});
 
-		// Define JWT payload.
-		const payload = { id: user.id };
-		// Issue new JWT.
-		const token = JWT.issue(payload);
+		// Issue new access and refresh JWT.
+		const [ tokens ] = await JWT.issueTokens({ user });
 
 		// Prepare output.
 		const result = [
-			token,
+			tokens,
 			user
 		];
+		// Send output.
 		return Promise.resolve(result);
 	}
 	catch(error){
@@ -51,7 +59,7 @@ async function _login({ email, password }) {
 			throw err;
 		}
 
-		if (!bcryptService.comparePasswords(password, user.password)) {
+		if (!bcrypt.comparePasswords(password, user.password)) {
 			// Validation failed,
 			// throw custom error with name Unauthorized:
 			const err = new Err(`Validation failed.`);
@@ -59,21 +67,24 @@ async function _login({ email, password }) {
 			throw err;
 		}
 
-		// If passwords matched, issue new token.
-		const token = JWT.issue({ id: user.id });
+		// Issue new access and refresh JWT.
+		const [ tokens ] = await JWT.issueTokens({ user });
 
 		// Prepare output.
 		const result = [
-			token,
+			tokens,
 			user
 		];
+		// Send output.
 		return Promise.resolve(result);
 	}
 	catch(error){
 		return Promise.reject(error);
 	}
 }
+// Auth\
 
+// Private:
 async function _getFullName({ userId }) {
 	try{
 		// Try to find user.
@@ -86,13 +97,14 @@ async function _getFullName({ userId }) {
 			throw err;
 		}
 
-		const fullName = user.fullName();
+		// Get value of virtual field 'fullName'.
+		const fullName = user.fullName;
 
-		// Prepare output.
-		const result = [ fullName ];
-		return Promise.resolve(result);
+		// Send output.
+		return Promise.resolve([ fullName ]);
 	}
 	catch(error){
 		return Promise.reject(error);
 	}
 }
+// Private\
