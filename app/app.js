@@ -15,7 +15,7 @@ const cors = require('cors');
 
 // Server configuration:
 // ORM.
-const dbService = require('#services/db.service');
+const DB = require('#services/db.service');
 // Port info.
 const serverConfig = require('#configs/server');
 // Routes.
@@ -26,8 +26,6 @@ const routes = require('#routes/');
 const app = express();
 // HTTP server (Do not use HTTPS, manage TLS with some proxy, like Nginx).
 const server = http.Server(app);
-// Initialize ORM.
-const DB = dbService(environments.current).start();
 
 // Allow cross origin requests
 // (configure to only allow requests from certain origins).
@@ -54,16 +52,24 @@ app.use(bodyParser.json());
 // Setup routes.
 app.use(routes({ app }));
 
+// Reference to active database connection.
+let db;
 // Initialize server:
-server.listen(serverConfig.port, () => {
+(async function(){
 	if (environments.allowed.indexOf(environments.current) === -1) {
 		console.error(`NODE_ENV is set to ${environments.current}, but only ${environments.allowed.toString()} are valid.`);
 		process.exit(1);
-	} 
-	else {
-		console.log('\x1b[1m', `server is running on port: ${serverConfig.port}`, '\x1b[0m');
 	}
-	return DB;
+
+	// Start ORM.
+	db = await DB.service(environments.current).start();
+})()
+.then(()=>{
+	server.listen(serverConfig.port, ()=>{
+		// Server is up!
+		console.info(`Server is running on port: ${serverConfig.port}`);
+		return db;
+	});
 });
 // Initialize server\
 
