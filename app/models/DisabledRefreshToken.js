@@ -22,7 +22,10 @@ const DisabledRefreshToken = database.define(
 		}
 	},
 	{
+		// Enable automatic 'createdAt' and 'updatedAt' fields.
 		timestamps: true,
+		// Only allow 'soft delete'
+		// (set of 'deletedAt' field, insted of the real deletion).
 		paranoid: true
 	}
 );

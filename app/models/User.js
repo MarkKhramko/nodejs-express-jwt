@@ -1,12 +1,12 @@
 // ORM:
 const { DataTypes } = require('sequelize');
-const sequelize = require('#configs/database');
+const database = require('#services/db.service');
 
 // Password hasher.
 const bcryptSevice = require('#services/bcrypt.service');
 
 
-const User = sequelize.define(
+const User = database.define(
 	'User',
 	{
 		email: {
@@ -18,6 +18,7 @@ const User = sequelize.define(
 			type: DataTypes.STRING(255),
 			allowNull: false
 		},
+
 		firstName: {
 			type: DataTypes.STRING(80),
 			allowNull: true
@@ -25,23 +26,44 @@ const User = sequelize.define(
 		lastName: {
 			type: DataTypes.STRING(175),
 			allowNull: true
+		},
+
+		// Example of virtual field:
+		fullName: {
+			type: DataTypes.VIRTUAL,
+			get: function() {
+				const firstName = this.getDataValue("firstName");
+				const lastName = this.getDataValue("lastName");
+				return `${(firstName || "" ).trim()} ${(lastName || "").trim()}`.trim();
+			}
 		}
 	},
 	{
-		timestamps: true
+		// Enable automatic 'createdAt' and 'updatedAt' fields.
+		timestamps: true,
+		// Only allow 'soft delete'
+		// (set of 'deletedAt' field, insted of the real deletion).
+		paranoid: true
 	}
 );
 
 // Hooks:
-User.beforeCreate((user, options) => {
+User.beforeValidate((user, options) => {
 	// Hash user's password.
 	user.password = bcryptSevice.hashPassword(user);
-});
+})
 // Hooks\
 
 // Static methods:
-User.findById = function(userId) {
-	return this.findByPk(userId);
+User.associate = (models) => {
+	models.User.hasMany(models.DisabledRefreshToken, {
+		foreignKey: "UserId",
+		as: 'disabledRefreshTokens'
+	});
+}
+
+User.findById = function(id) {
+	return this.findByPk(id);
 }
 
 User.findOneByEmail = function(email) {
@@ -55,15 +77,11 @@ User.findOneByEmail = function(email) {
 // Static methods\
 
 // Instance methods:
-User.prototype.fullName = function() {
-	return `${this.firstName ?? ""} ${this.lastName ?? ""}`.trim();
-}
-
 User.prototype.toJSON = function() {
 	const values = { ...this.get() };
 	delete values.password;
 	return values;
-};
+}
 // Instance methods\
 
 module.exports = User;
