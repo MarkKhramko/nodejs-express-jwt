@@ -15,11 +15,17 @@ function APIController() {
 		// Default HTTP status code.
 		let statusCode = 500;
 
-		if (error.name === 'TypeError'){
-			errorMessage = "Type error. Check your console for details.";
-			statusCode = 402;
+		switch(error.name) {
+			case('TypeError'):
+				errorMessage = 'Type error. Check your console for details.';
+				statusCode = 402;
+				break;
+
+			// Perform your custom processing here...
+
+			default:
+				break;
 		}
-		// Perform your custom process here...
 
 		// Send error response with provided status code.
 		return createErrorResponse({
@@ -28,11 +34,11 @@ function APIController() {
 				message: errorMessage
 			},
 			status: statusCode
-		})
+		});
 	}
 
 	const _getStatus = (req, res) => {
-		try{
+		try {
 			// Try making some faulty operation here,
 			// to see how error will be displayed:
 			
@@ -48,7 +54,7 @@ function APIController() {
 				}
 			});
 		}
-		catch(error){
+		catch(error) {
 			console.error("APIController._getStatus error: ", error);
 			return _processError(error, req, res);
 		}
