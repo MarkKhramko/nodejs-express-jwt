@@ -7,7 +7,7 @@ const {
 const HomePageController = () => {
 
 	const _getHomePage = (req, res) =>{
-		try{
+		try {
 			// Try making some faulty operation here,
 			// to see how error will be displayed:
 			
@@ -17,16 +17,15 @@ const HomePageController = () => {
 			// Otherwise it will successfully render home page.
 			return createOKResponse(res, 'home');
 		}
-		catch(error){
+		catch(error) {
 			console.error("HomePageController._getHomePage error:", error);
 			return createErrorResponse(res, error);
 		}
-		
-	};
+	}
 
 	return {
 		getHomePage: _getHomePage
-	};
-};
+	}
+}
 
 module.exports = HomePageController;
