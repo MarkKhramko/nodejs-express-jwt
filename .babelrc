@@ -9,7 +9,8 @@
 				"#models":"./app/models",
 				"#policies":"./app/policies",
 				"#routes": "./app/routes",
-				"#services":"./app/services"
+				"#services":"./app/services",
+				"#utils":"./app/utils"
 			}
 		}]
 	]
