@@ -1,5 +1,5 @@
 {
-	"name": "nodejs-express-jwt",	
+	"name": "nodejs-express-jwt",
 	"version": "1.0.0",
 	"author": "Mark Khramko <markkhramko@gmail.com>",
 	"license": "MIT",
@@ -16,15 +16,6 @@
 		"core-js": "^2.6.11",
 		"cors": "^2.8.5",
 		"dotenv": "^8.2.0",
-<<<<<<< HEAD
-		"express": "^4.17.1",
-		"express-routes-mapper": "^1.1.0",
-		"helmet": "^4.4.1",
-		"jsonwebtoken": "^8.5.1",
-		"mysql2": "^2.2.5",
-		"pug": "^3.0.0",
-		"sequelize": "^6.5.0"
-=======
 		"express": "^4.16.3",
 		"express-routes-mapper": "^1.0.2",
 		"helmet": "^3.22.0",
@@ -32,7 +23,6 @@
 		"mysql2": "^2.1.0",
 		"pug": "^3.0.1",
 		"sequelize": "^5.21.5"
->>>>>>> origin/dependabot/npm_and_yarn/pug-3.0.1
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.12.10",
