@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"scripts": {
 		"start": "babel-node ./app/app.js",
-		"dev": "cross-env NODE_ENV=development nodemon --ignore public/ --exec babel-node ./app/app.js",
+		"dev": "cross-env NODE_ENV=development nodemon",
 		"production": "cross-env NODE_ENV=production babel-node ./app/app.js",
 		"db:migrate": "babel-node ./migrator/start.js",
 		"db:seed": "babel-node ./migrator/seeder.js"
