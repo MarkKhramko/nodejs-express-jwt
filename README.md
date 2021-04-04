@@ -2,20 +2,25 @@
 
 > Express REST API Boilerplate with JWT Authentication and support for MySQL and PostgreSQL.
 
-- Compilation via [Babel](https://babeljs.io/)
-- Authentication via [JWT](https://jwt.io/)
-- Routes mapping via [express-routes-mapper](https://github.com/aichbauer/express-routes-mapper)
-- Environments for `development`, `testing`, and `production`
+- Compilation via [Babel](https://babeljs.io/);
+- Authentication via [JWT](https://jwt.io/);
+- Routes mapping via [express-routes-mapper](https://github.com/aichbauer/express-routes-mapper);
+- Environments for `development`, `testing`, and `production`.
 
 ## Table of Contents
 
+- [Version notice](#version-notice)
 - [Install & Use](#install-and-use)
 - [Policies](#policies)
 - [Services](#services)
-- [Config](#config)
-  - [Connection and Database](#connection-and-database)
+- [Configs](#configs)
+  - [.env](#.env-file)
 - [npm scripts](#npm-scripts)
 - [License]()
+
+## Version notice
+
+This project came a long way since the initial release in 2018. If you used this boilerplate before 2021, you should check a [v0.x.x branch](https://github.com/MarkKhramko/nodejs-express-jwt/tree/v0.x.x) and [v0 tags](https://github.com/MarkKhramko/nodejs-express-jwt/releases/tag/v0.0.0)for latest changes of v0.
 
 ## Install and Use
 
@@ -66,23 +71,27 @@ Get comments from another API:
 
 ```js
 module.exports = {
-  getComments: async () => (
-    try{
-      const res = await fetch('https://jsonplaceholder.typicode.com/comments', {
-        method: 'get'
-      });
-      // do some fancy stuff with the response
-    }
-    catch(err){
-      // Process error
-    }
-  );
+  getComments:_getComments
 };
+
+async function _getComments() {
+  try {
+    const res = await fetch('https://jsonplaceholder.typicode.com/comments', {
+      method: 'get'
+    });
+    // do some fancy stuff with the response.
+  }
+  catch(error) {
+    // Process error.
+  }
+}
 ```
 
-## Config
+## Configs
 
-### Connection and Database
+### .env file
+
+#### Database
 
 Configure the keys with your credentials in `.env` file.
 
@@ -101,39 +110,62 @@ Default dialect for the application is MySQL. To switch for PostgreSQL, type `DB
 
 > Note: to use a postgres run : `npm i -S pg pg-hstore` or `yarn add pg pg-hstore`
 
+#### JWT
+
+Set random `secret access keys` for your access and refresh tokens.
+
+```
+JWT_ACCESS_SECRET=<any random string>
+JWT_REFRESH_SECRET=<any random string>
+```
+
 ## npm scripts
 
 ### `npm run dev`
 
 This is the entry for a developer. This command:
 
-- runs **nodemon watch task** for the all files conected to `.app/app.js`, except `./public` directory
-- Reads **environment variable** `NODE_ENV` from `.env`
-- Opens the db connection for `development`
-- Starts the server on 127.0.0.1:APP_PORT
+- runs **nodemon watch task** for the all files conected to `.app/app.js`, except `./public` directory;
+- Reads **environment variable** `NODE_ENV` from `.env`;
+- Opens the db connection for `development`;
+- Starts the server on 127.0.0.1:APP_PORT,
 
-## `npm run production`
+### `npm run production`
 
 This command:
 
-- Sets the **environment variable** to `production`
-- Opens the db connection for `production`
-- Starts the server on 127.0.0.1:APP_PORT
+- Sets the **environment variable** to `production`;
+- Opens the db connection for `production`;
+- Starts the server on 127.0.0.1:APP_PORT.
 
 Before running on production you have to set the **environment vaiables**:
 
-- APP_PORT - Port for your application (usually `80`).
-- DB_DIALECT - `mysql` or `postgres`
-- DB_HOST - Host address of your database
-- DB_NAME - Database name for production
-- DB_USER - Database username for production
-- DB_PASS - Database password for production
-- DB_PORT - Database port for production
-- JWT_SECERT - Secret for JSON web token (Make sure it is different from your local environment)
+- APP_PORT - Port for your application (usually `80`);
+- DB_DIALECT - `mysql` or `postgres`l;
+- DB_HOST - Host address of your database;
+- DB_NAME - Database name for production;
+- DB_USER - Database username for production;
+- DB_PASS - Database password for production;
+- DB_PORT - Database port for production;
+- JWT_ACCESS_SECRET - Secret for JSON web token for direct API requests;
+- JWT_REFRESH_SECRET - Secret for JSON web token to renew the Access-JWT.
 
-### Other commands
+### `npm start`
 
-- `npm start` - Simply start the server without a watcher;
+This command:
+- Opens the db connection for default environment in `.env` file.
+- Simply start the server on 127.0.0.1:APP_PORT without a watcher.
+
+### `npm run db:migrate`
+
+This command:
+- Ensures that database schemas are equivalent to the ones configured in `/app/models/index.js`.
+
+### `npm run db:seed`
+
+This command:
+- Inserts all seeds, configured in `/migrator/seeder.js` into the database.
+
 
 ## LICENSE
 
