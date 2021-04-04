@@ -2,6 +2,7 @@
  * Main application file:
  */
 
+// Info about current and allowed environments.
 const environments = require('#configs/envinorments');
 // Middleware for parsing requests bodies.
 const bodyParser = require('body-parser');
@@ -18,14 +19,15 @@ const cors = require('cors');
 const DB = require('#services/db.service');
 // Port info.
 const serverConfig = require('#configs/server');
-// Routes.
-const routes = require('#routes/');
 // Server configuration\
 
 // Express application.
 const app = express();
 // HTTP server (Do not use HTTPS, manage TLS with some proxy, like Nginx).
 const server = http.Server(app);
+// Routes.
+const routes = require('#routes/');
+
 
 // Allow cross origin requests
 // (configure to only allow requests from certain origins).
@@ -52,10 +54,11 @@ app.use(bodyParser.json());
 // Setup routes.
 app.use(routes({ app }));
 
-// Reference to active database connection.
+
+// Reference to the active database connection.
 let db;
 // Initialize server:
-(async function(){
+(async function() {
 	if (environments.allowed.indexOf(environments.current) === -1) {
 		console.error(`NODE_ENV is set to ${environments.current}, but only ${environments.allowed.toString()} are valid.`);
 		process.exit(1);
@@ -91,7 +94,7 @@ function _gracefulShutdown(exit=false) {
 
 process.on('unhandledRejection', (reason, p) => {
 	console.error(reason, 'Unhandled Rejection at Promise', p);
-})
+});
 	
 process.on('uncaughtException', err => {
 	console.error(err, 'Uncaught Exception thrown');
