@@ -8,7 +8,7 @@ const db = require('#services/db.service');
 
 async function _main() {
 	try {
-		if(process.env.NODE_ENV !== 'development'){
+		if (process.env.NODE_ENV !== 'development') {
 			const error = new Error("Can not make any actions in non-dev env.");
 			throw error;
 		}
