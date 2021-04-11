@@ -1,6 +1,6 @@
 {
 	"verbose": true,
-	"ignore":[ "public/" ],
+	"ignore":[ "public/", "README.md" ],
 	"execMap": {
 		"app":"babel-node ./app/app.js"
 	}
