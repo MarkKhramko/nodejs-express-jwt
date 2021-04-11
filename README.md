@@ -11,6 +11,10 @@
 
 - [Version notice](#version-notice)
 - [Install & Use](#install-and-use)
+- [Controllers](#controllers)
+  - [Create a Controller](#create-a-controller)
+- [Models](#models)
+  - [Create a Model](#create-a-model)
 - [Policies](#policies)
 - [Services](#services)
 - [Configs](#configs)
@@ -20,7 +24,7 @@
 
 ## Version notice
 
-This project came a long way since the initial release in 2018. If you used this boilerplate before 2021, you should check a [v0.x.x branch](https://github.com/MarkKhramko/nodejs-express-jwt/tree/v0.x.x) and [v0 tags](https://github.com/MarkKhramko/nodejs-express-jwt/releases/tag/v0.0.0)for latest changes of v0.
+This project came a long way since the initial release in 2018. If you used this boilerplate before 2021, you should check a [v0.x.x branch](https://github.com/MarkKhramko/nodejs-express-jwt/tree/v0.x.x) and [v0 tags](https://github.com/MarkKhramko/nodejs-express-jwt/releases/tag/v0.0.0) for the latest changes of v0.
 
 ## Install and Use
 
@@ -55,6 +59,200 @@ $ npm run dev
 
 MySQL is supported out of the box as it is the default.
 
+## Controllers
+
+Controllers in this boilerplate have a naming convention: `ModelnameController.js` and uses an object factory pattern.
+To use a model inside of your controller you have to require it.
+We use [Sequelize](http://docs.sequelizejs.com/) as ORM, if you want further information read the [Docs](http://docs.sequelizejs.com/).
+
+### Folder structure
+
+* Controllers for your main API should be placed inside `/api/` directory;
+* Controllers for HTTP requests should be placed inside `/web/`  directory.
+
+### Create a Controller
+
+Example Controller for all **CRUD** oparations:
+
+```js
+const Model = require('#models/Model');
+
+model.exports = function ModelController() {
+  const _create = (req, res) => {
+    // body is part of a form-data
+    const { value } = req.body;
+
+    Model
+      .create({
+        key: value
+      })
+      .then((model) => {
+        if(!model) {
+          return res.status(400).json({ msg: 'Bad Request: Model not found' });
+        }
+
+        return res.status(200).json({ model });
+      })
+      .catch((err) => {
+        // better save it to log file
+        console.error(err);
+
+        return res.status(500).json({ msg: 'Internal server error' });
+      });
+  };
+
+  const _getAll = (req, res) => {
+    Model
+      .findAll()
+      .then((models) => {
+        if(!models){
+          return res.status(400).json({ msg: 'Bad Request: Models not found' });
+        }
+
+        return res.status(200).json({ models });
+      })
+      .catch((err) => {
+        // better save it to log file
+        console.error(err);
+
+        return res.status(500).json({ msg: 'Internal server error' });
+      });
+  };
+
+  const _get = (req, res) => {
+    // params is part of an url
+    const { id } = req.params;
+
+    Model
+      .findOne({
+        where: {
+          id,
+        },
+      })
+      .then((model) => {
+        if(!model) {
+          return res.status(400).json({ msg: 'Bad Request: Model not found' });
+        }
+
+        return res.status(200).json({ model });
+      })
+      .catch((err) => {
+        // better save it to log file
+        console.error(err);
+
+        return res.status(500).json({ msg: 'Internal server error' });
+      });
+  };
+
+  const _update = (req, res) => {
+    // params is part of an url
+    const { id } = req.params;
+
+    // body is part of form-data
+    const { value } = req.body;
+
+    Model
+      .findByPk(id)
+      .then((model) => {
+        if(!model) {
+          return res.status(400).json({ msg: 'Bad Request: Model not found' });
+        }
+
+        return model
+          .update({
+            key: value,
+          }).then((updatedModel) => {
+            return res.status(200).json({ updatedModel });
+          });
+      })
+      .catch((err) => {
+        // better save it to log file
+        console.error(err);
+
+        return res.status(500).json({ msg: 'Internal server error' });
+      });
+  };
+
+  const _destroy = (req, res) => {
+    // params is part of an url
+    const { id } = req.params;
+
+    Model
+      .findByPk(id)
+      .then((model) => {
+        if(!model) {
+          return res.status(400).json({ msg: 'Bad Request: Model not found' })
+        }
+
+        model.destroy().then(() => {
+          return res.status(200).json({ msg: 'Successfully destroyed model' });
+        }).catch((err) => {
+          // better save it to log file
+          console.error(err);
+
+          return res.status(500).json({ msg: 'Internal server error' });
+        });
+      })
+      .catch((err) => {
+        // better save it to log file
+        console.error(err);
+
+        return res.status(500).json({ msg: 'Internal server error' });
+      });
+  };
+
+  // !IMPORTANT!
+  // don't forget to return the functions:
+  return {
+    create:_create,
+    getAll:_getAll,
+    get:_get,
+    update:_update,
+    destroy:_destroy
+  };
+};
+```
+
+## Models
+
+Models in this boilerplate have a naming convention: `Model.js` and uses [Sequelize](http://docs.sequelizejs.com/) to define Models, if you want further information read the [Docs](http://docs.sequelizejs.com/).
+
+### Create a Model
+
+Example User Model:
+
+```js
+const { DataTypes } = require('sequelize');
+const database = require('#services/db.service');
+
+// Password hasher.
+const bcryptSevice = require('#services/bcrypt.service');
+
+
+const User = database.define(
+  'User',
+  {
+    email: {
+      type: DataTypes.STRING(255),
+      unique: true,
+      allowNull: false
+    },
+    password: {
+      type: DataTypes.STRING(255),
+      allowNull: false
+    },
+  }
+);
+
+// Hooks:
+User.beforeValidate((user, options) => {
+  // Hash user's password.
+  user.password = bcryptSevice.hashPassword(user);
+})
+// Hooks\
+
+module.exports = User;
+```
 
 ## Policies
 
