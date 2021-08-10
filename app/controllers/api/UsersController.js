@@ -29,7 +29,7 @@ function UsersController() {
 				break;
 			case('ValidationError'):
 				errorMessage = "Invalid email OR password input";
-				statusCode = 402;
+				statusCode = 401;
 				break;
 			case('InvalidToken'):
 				errorMessage = 'Invalid token or token expired';
