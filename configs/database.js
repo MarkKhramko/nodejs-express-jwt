@@ -15,7 +15,7 @@ module.exports = {
 		idle: 10000,
 	},
 	charset: CHARSET,
-	collate: COLLATE, 
+	collate: COLLATE,
 	timestamps: true,
-	logging:false
+	logging: false
 }

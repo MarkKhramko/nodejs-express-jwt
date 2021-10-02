@@ -2,10 +2,6 @@
 const { DataTypes } = require('sequelize');
 const database = require('#services/db.service');
 
-// Custom error.
-const { Err } = require('#factories/errors');
-
-
 const DisabledRefreshToken = database.define(
 	'DisabledRefreshToken',
 	{
@@ -38,14 +34,14 @@ DisabledRefreshToken.associate = models => {
 	});
 }
 
-DisabledRefreshToken.createOrFind = function({ token, userId }) {
+DisabledRefreshToken.createOrFind = function ({ token, userId }) {
 	const where = {
 		token
 	};
 
 	const defaults = {
-		token:token,
-		UserId:userId
+		token: token,
+		UserId: userId
 	};
 
 	const query = {
@@ -55,7 +51,7 @@ DisabledRefreshToken.createOrFind = function({ token, userId }) {
 	return this.findOrCreate(query);
 }
 
-DisabledRefreshToken.selectAll = function({ token }) {
+DisabledRefreshToken.selectAll = function ({ token }) {
 	const where = {
 		token
 	};
@@ -65,7 +61,7 @@ DisabledRefreshToken.selectAll = function({ token }) {
 // Static methods\
 
 // Instance methods:
-DisabledRefreshToken.prototype.toJSON = function() {
+DisabledRefreshToken.prototype.toJSON = function () {
 	const values = Object.assign({}, this.get());
 	return values;
 }

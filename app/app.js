@@ -34,7 +34,7 @@ const routes = require('#routes/');
 app.use(cors());
 
 // Set views path.
-app.set('views', __dirname+'/views');
+app.set('views', __dirname + '/views');
 // Set template engine (Pug by default).
 app.set('view engine', 'pug');
 // Set folder for static contents.
@@ -58,7 +58,7 @@ app.use(routes({ app }));
 // Reference to the active database connection.
 let db;
 // Initialize server:
-(async function() {
+(async function () {
 	if (environments.allowed.indexOf(environments.current) === -1) {
 		console.error(`NODE_ENV is set to ${environments.current}, but only ${environments.allowed.toString()} are valid.`);
 		process.exit(1);
@@ -67,16 +67,16 @@ let db;
 	// Start ORM.
 	db = await DB.service(environments.current).start();
 })()
-.then(()=>{
-	server.listen(serverConfig.port, ()=>{
-		// Server is up!
-		console.info(`Server is running on port: ${serverConfig.port}`);
-		return db;
+	.then(() => {
+		server.listen(serverConfig.port, () => {
+			// Server is up!
+			console.info(`Server is running on port: ${serverConfig.port}`);
+			return db;
+		});
 	});
-});
 // Initialize server\
 
-function _gracefulShutdown(exit=false) {
+function _gracefulShutdown(exit = false) {
 	console.warn('Received SIGINT or SIGTERM. Shutting down gracefully...');
 	const exitCode = exit ? 1 : 0;
 
@@ -89,15 +89,14 @@ function _gracefulShutdown(exit=false) {
 	setTimeout(() => {
 		console.error('Could not close connections in time, forcefully shutting down');
 		process.exit(exitCode);
-	}, 5*1000);
+	}, 5 * 1000);
 }
 
 process.on('unhandledRejection', (reason, p) => {
 	console.error(reason, 'Unhandled Rejection at Promise', p);
 });
-	
+
 process.on('uncaughtException', err => {
 	console.error(err, 'Uncaught Exception thrown');
-	
 	_gracefulShutdown(true);
 });
