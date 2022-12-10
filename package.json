@@ -16,7 +16,7 @@
 		"core-js": "^2.6.11",
 		"cors": "^2.8.5",
 		"dotenv": "^8.2.0",
-		"express": "^4.16.3",
+		"express": "^4.17.3",
 		"express-routes-mapper": "^1.0.2",
 		"helmet": "^3.22.0",
 		"jsonwebtoken": "^8.2.1",
