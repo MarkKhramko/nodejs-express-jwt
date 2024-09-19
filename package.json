@@ -20,9 +20,9 @@
 		"express-routes-mapper": "^1.0.2",
 		"helmet": "^3.22.0",
 		"jsonwebtoken": "^9.0.0",
-		"mysql2": "^2.1.0",
+		"mysql2": "^3.11.3",
 		"pug": "^3.0.1",
-		"sequelize": "^5.21.5"
+		"sequelize": "^6.37.3"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.12.10",
@@ -31,7 +31,7 @@
 		"@babel/preset-env": "^7.12.11",
 		"babel-plugin-module-resolver": "^5.0.0",
 		"cross-env": "^7.0.3",
-		"nodemon": "^2.0.7"
+		"nodemon": "^3.1.5"
 	},
 	"description": "Node.js Express REST API boilerplate with JWT Authentication and support for MySQL and PostgreSQL.",
 	"repository": {
