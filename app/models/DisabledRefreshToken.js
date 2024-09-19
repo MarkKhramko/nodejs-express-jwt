@@ -2,9 +2,6 @@
 const { DataTypes } = require('sequelize');
 const database = require('#services/db.service');
 
-// Custom error.
-const { Err } = require('#factories/errors');
-
 
 const DisabledRefreshToken = database.define(
 	'DisabledRefreshToken',
@@ -33,7 +30,7 @@ const DisabledRefreshToken = database.define(
 // Static methods:
 DisabledRefreshToken.associate = models => {
 	models.DisabledRefreshToken.belongsTo(models.User, {
-		foreignKey: "UserId",
+		foreignKey: 'UserId',
 		as: 'user'
 	});
 }
@@ -44,8 +41,8 @@ DisabledRefreshToken.createOrFind = function({ token, userId }) {
 	};
 
 	const defaults = {
-		token:token,
-		UserId:userId
+		token: token,
+		UserId: userId
 	};
 
 	const query = {

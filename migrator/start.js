@@ -16,11 +16,12 @@ async function _main() {
 		// Set 'force' to true if you want to rewrite database.
 		const force = true;
 		await db.migrate(process.env.NODE_ENV, force);
-		console.log("All models migrated.");
+		
+		console.info('All models migrated.');
 		process.exit(0);
 	}
 	catch(error) {
-		console.error("Migrator error:", error);
+		console.error('Migrator error:', error);
 		process.exit(1);
 	}
 }

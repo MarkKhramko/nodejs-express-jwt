@@ -9,11 +9,13 @@ module.exports = {
 async function _run () {
 	try {
 		const exampleUserData = {
-			email:"test@test.com",
-			password:"simplepass"
+			email:    'test@test.com',
+			password: 'simplepass'
 		}
 
-		const user = await usersFacade.register(exampleUserData);
+		await usersFacade.register(exampleUserData);
+
+		return Promise.resolve();
 	}
 	catch(error) {
 		return Promise.reject(error);

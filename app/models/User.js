@@ -32,9 +32,9 @@ const User = database.define(
 		fullName: {
 			type: DataTypes.VIRTUAL,
 			get: function() {
-				const firstName = this.getDataValue("firstName");
-				const lastName = this.getDataValue("lastName");
-				return `${(firstName || "" ).trim()} ${(lastName || "").trim()}`.trim();
+				const firstName = this.getDataValue('firstName');
+				const lastName = this.getDataValue('lastName');
+				return `${(firstName || '').trim()} ${(lastName || '').trim()}`.trim();
 			}
 		}
 	},
@@ -57,7 +57,7 @@ User.beforeValidate((user, options) => {
 // Static methods:
 User.associate = (models) => {
 	models.User.hasMany(models.DisabledRefreshToken, {
-		foreignKey: "UserId",
+		foreignKey: 'UserId',
 		as: 'disabledRefreshTokens'
 	});
 }

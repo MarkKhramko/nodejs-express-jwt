@@ -1,7 +1,7 @@
 // JWT Service.
 const JWT = require('#services/jwt.service');
 // Reponse protocols.
-const { createErrorResponse } = require("#factories/responses/api");
+const { createErrorResponse } = require('#factories/responses/api');
 // Custom error.
 const { Err } = require('#factories/errors');
 
@@ -27,12 +27,12 @@ module.exports = async (req, res, next) => {
 			}
 		}
 		// Check token in query:
-		else if (!!req.query.token) {
+		else if (req.query.token) {
 			tokenToVerify = req.query.token;
 			delete req.body.token;
 		}
 		// Check token in body:
-		else if (!!req.body.token) {
+		else if (req.body.token) {
 			tokenToVerify = req.body.token;
 			delete req.query.token;
 		} 
@@ -51,7 +51,7 @@ module.exports = async (req, res, next) => {
 	catch(error) {
 		// If error is not our custom error, log it.
 		if (error.name !== Err.name)
-			console.error("refreshToken.policy error:", error);
+			console.error('refreshToken.policy error:', error);
 		else
 			error.name = 'ValidationError';
 

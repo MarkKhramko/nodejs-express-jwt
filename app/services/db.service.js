@@ -2,8 +2,6 @@
 const Sequelize = require('sequelize');
 // Connection configs.
 const Configs = require('#configs/database');
-// Custom error.
-const { Err } = require('#factories/errors');
 
 
 // Make first database connection.
@@ -12,14 +10,14 @@ const connection = new Sequelize(
 	Configs.username,
 	Configs.password,
 	{
-		host:Configs.host,
-		port:Configs.port,
-		dialect:Configs.dialect,
-		pool:Configs.pool,
-		charset:Configs.charset,
-		collate:Configs.collate, 
-		timestamps:Configs.timestamps,
-		logging:Configs.logging
+		host: Configs.host,
+		port: Configs.port,
+		dialect: Configs.dialect,
+		pool: Configs.pool,
+		charset: Configs.charset,
+		collate: Configs.collate, 
+		timestamps: Configs.timestamps,
+		logging: Configs.logging
 	}
 );
 
@@ -27,7 +25,7 @@ module.exports = connection;
 module.exports.service = DBService;
 module.exports.migrate = _migrate;
 
-function DBService(environment) {
+function DBService() {
 
 	const _authenticateDB = () => (
 		connection.authenticate()

@@ -2,6 +2,8 @@
 const DisabledRefreshToken = require('#models/DisabledRefreshToken');
 // JWT service.
 const JWT = require('#services/jwt.service');
+// Custom error.
+const { Err } = require('#factories/errors');
 
 
 module.exports = {
@@ -21,7 +23,7 @@ async function _issueAccessToken({ refreshToken, user }){
 		let newAccessToken = null;
 
 		// If refresh token was provided:
-		if (!!refreshToken) {
+		if (refreshToken) {
 			const payload = {
 				id:refreshToken?.id,
 				roles:refreshToken?.roles ?? []
@@ -29,7 +31,7 @@ async function _issueAccessToken({ refreshToken, user }){
 			newAccessToken = await JWT.issueAccessToken(payload);
 		}
 		// If user was provided:
-		else if (!!user) {
+		else if (user) {
 			const payload = { id:user?.id };
 			newAccessToken = await JWT.issueAccessToken(payload);
 		}
@@ -62,7 +64,7 @@ async function _issueTokens({ user }) {
 		// Prepare payload container.
 		let payload = {};
 
-		if (!!user) {
+		if (user) {
 			payload = { id:user?.id };
 		}
 		else {
@@ -107,7 +109,8 @@ async function _refreshAccessToken({ refreshToken }) {
 
 async function _isRefreshTokenActive({ refreshToken }) {
 	try {
-		const { id, token } = refreshToken;
+		// Unwrap nessessary data.
+		const { token } = refreshToken;
 
 		const foundTokens = await DisabledRefreshToken.selectAll({ token });
 
