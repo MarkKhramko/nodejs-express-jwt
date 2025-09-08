@@ -246,6 +246,6 @@ function UsersController() {
 		logout: _logout,
 
 		// Protected:
-		getFullName:_getFullName
+		getFullName: _getFullName
 	}
 }

@@ -4,7 +4,10 @@ const {
 	createErrorResponse
 } = require('#factories/responses/web');
 
-const HomePageController = () => {
+
+module.exports = HomePageController;
+
+function HomePageController() {
 
 	const _getHomePage = (req, res) =>{
 		try {
@@ -27,5 +30,3 @@ const HomePageController = () => {
 		getHomePage: _getHomePage
 	}
 }
-
-module.exports = HomePageController;
