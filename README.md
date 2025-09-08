@@ -39,22 +39,26 @@ then use [npm](https://www.npmjs.com/) to
 
 ```sh
 # Enter project root
-$ cd nodejs-express-jwt
+cd nodejs-express-jwt
+
 # Install dependencies
-$ npm i
+npm i
+
 # Copy environment file 
-$ cp .env.example .env
+cp .env.example .env
 # Fill .env file
 # ...
+
 # If you want to use PostgreSQL (optional)
-$ npm install -S pg pg-hstore
+npm i -S pg pg-hstore
+
 # Start the application (without code watcher)
-$ npm start
+npm start
 #
 # OR
 #
 # start development with nodemon
-$ npm run dev
+npm run dev
 ```
 
 MySQL is supported out of the box as it is the default.
@@ -204,11 +208,11 @@ model.exports = function ModelController() {
   // !IMPORTANT!
   // don't forget to return the functions:
   return {
-    create:_create,
-    getAll:_getAll,
-    get:_get,
-    update:_update,
-    destroy:_destroy
+    create: _create,
+    getAll: _getAll,
+    get: _get,
+    update: _update,
+    destroy: _destroy
   };
 };
 ```
@@ -294,12 +298,12 @@ async function _getComments() {
 Configure the keys with your credentials in `.env` file.
 
 ```
-  DB_DIALECT=mysql
-  DB_HOST=localhost
-  DB_NAME=name
-  DB_USER=root
-  DB_PASSWORD=root
-  DB_PORT=3609
+DB_DIALECT=mysql
+DB_HOST=localhost
+DB_NAME=name
+DB_USER=root
+DB_PASSWORD=root
+DB_PORT=3609
 ```
 
 Default dialect for the application is MySQL. To switch for PostgreSQL, type `DB_DIALECT=postgres` in `.env` file.
@@ -350,21 +354,22 @@ Before running on production you have to set the **environment vaiables**:
 
 ### `npm start`
 
-This command:
 - Opens the db connection for default environment in `.env` file.
 - Simply start the server on 127.0.0.1:APP_PORT without a watcher.
 
+
 ### `npm run db:migrate`
 
-This command:
 - Ensures that database schemas are equivalent to the ones configured in `/app/models/index.js`.
+
 
 ### `npm run db:seed`
 
-This command:
 - Inserts all seeds, configured in `/migrator/seeder.js` into the database.
 
 
-## LICENSE
+## License
+[MIT](LICENSE)
 
-MIT 2018-present. By [Mark Khramko](https://github.com/MarkKhramko)
+## Copyright
+Copyright 2018-present [Mark Khramko](https://github.com/MarkKhramko)
